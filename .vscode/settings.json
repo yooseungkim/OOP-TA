@@ -2,6 +2,10 @@
   "files.associations": {
     "stdlib.h": "c",
     "iosfwd": "cpp",
-    "ostream": "cpp"
+    "ostream": "cpp",
+    "chrono": "cpp",
+    "limits": "cpp",
+    "ratio": "cpp",
+    "algorithm": "cpp"
   }
 }

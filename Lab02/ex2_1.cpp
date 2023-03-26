@@ -2,7 +2,7 @@
 #include <cmath>
 using namespace std;
 
-inline double circleArea(double radius)
+inline double circleArea(double radius) // inline function definition
 {
     return M_PI * radius * radius;
 }

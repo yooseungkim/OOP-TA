@@ -3,7 +3,7 @@
 using namespace std;
 
 int big(int, int);
-int big(int *, int);
+int big(int *, int); // function overloading
 
 int main()
 {
