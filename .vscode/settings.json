@@ -8,6 +8,7 @@
     "ratio": "cpp",
     "algorithm": "cpp",
     "vector": "cpp",
-    "typeinfo": "cpp"
+    "typeinfo": "cpp",
+    "iostream": "cpp"
   }
 }
