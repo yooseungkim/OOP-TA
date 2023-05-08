@@ -1,32 +1,62 @@
+#include <string>
 #include <iostream>
 using namespace std;
-
-class abc
+class Point
 {
-    int a;
+    int x, y;
 
 public:
-    void init();
-    friend void print(abc);
+    Point(int x, int y)
+    {
+        this->x = x;
+        this->y = y;
+    }
+
+    int getX()
+    {
+        return x;
+    }
+
+    int getY()
+    {
+        return y;
+    }
+
+protected:
+    void move(int x, int y)
+    {
+        this->x = x;
+        this->y = y;
+    }
 };
 
-void abc::init()
+class ColorPoint : public Point
 {
-    a = 10;
-}
+    string color;
 
-// 2. Friend function definition
-void print(abc a)
-{
-    cout << "Value : " << a.a << endl;
-}
+public:
+    ColorPoint(int x, int y, string color) : Point(x, y)
+    {
+        this->color = color;
+    }
+    void setPoint(int x, int y)
+    {
+        move(x, y);
+    }
+    void setColor(string color)
+    {
+        this->color = color;
+    }
+    void show()
+    {
+        cout << "Point located at " << getX() << ", " << getY() << " with color " << color << endl;
+    }
+};
 
 int main()
 {
-    abc k;
-
-    k.init();
-    print(k);
-
-    return 0;
+    ColorPoint cp(5, 5, "RED");
+    cp.setPoint(10, 20);
+    cp.setColor("BLUE");
+    cp.show();
 }

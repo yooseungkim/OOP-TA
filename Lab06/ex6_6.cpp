@@ -28,12 +28,12 @@ public:
 
     int volume()
     {
-        return this->getArea() * depth;
+        return width * height * depth;
     }
 
     int getArea()
     {
-        return 2 * (this->getArea() + width * depth + height * depth);
+        return 2 * (width * height + width * depth + height * depth);
     }
 };
 int main()
@@ -42,5 +42,7 @@ int main()
     Cuboid cuboid(3, 4, 5);
 
     cout << "Area : " << rectangle.getArea() << endl;
-    cout <<
+    cout << "Perimeter : " << rectangle.getPerimeter() << endl;
+    cout << "Surface Area : " << cuboid.getArea() << endl;
+    cout << "Volume : " << cuboid.volume() << endl;
 }
