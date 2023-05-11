@@ -1,44 +1,52 @@
 #include <iostream>
-
+#include <cmath>
 using namespace std;
 
-class Car
+class Circle
 {
-private:
-    int num;
-    double gas;
+    int radius;
 
 public:
-    Car();
-    void setCar(int n, double g);
-    void show();
-    friend ostream &operator<<(ostream &, const Car);
+    Circle(int r) : radius(r){};
+    ~Circle(){};
+
+    double getPeri()
+    {
+        return 2 * M_PI * radius;
+    }
+
+    double getArea()
+    {
+        return M_PI * radius * radius;
+    }
 };
 
-Car::Car()
+class Cylinder : public Circle
 {
-    num = 0;
-    gas = 0.0;
-    cout << "Car is constructed\n";
-}
+    int height;
 
-void Car::setCar(int n, double g)
-{
-    num = n;
-    gas = g;
-}
+public:
+    Cylinder(int r, int h) : Circle(r), height(h){};
+    ~Cylinder(){};
 
-ostream &operator<<(ostream &os, const Car car)
-{
-    os << "Car's number: " << car.num << '\t' << "Gass Amount: " << car.gas << endl;
-    return os;
-}
+    double getSurface()
+    {
+        return 2 * getArea() + getPeri() * height;
+    }
+
+    double getVolume()
+    {
+        return getArea() * height;
+    }
+};
 
 int main()
 {
-    Car myCar;
-    myCar.setCar(1234, 75.5);
-    cout << myCar;
+    Circle circle(5);
+    Cylinder cylinder(5, 10);
 
-    return 0;
+    cout << circle.getPeri() << endl;
+    cout << circle.getArea() << endl;
+    cout << cylinder.getSurface() << endl;
+    cout << cylinder.getVolume() << endl;
 }
