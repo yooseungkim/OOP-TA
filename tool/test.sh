@@ -26,3 +26,6 @@ done
 $output > test.csv
 cat test.csv
 
+
+readarray -d '' array < <(find ../ -type d -maxdepth 1 -print0)
+for i in "${array[@]}"; do echo $i; done

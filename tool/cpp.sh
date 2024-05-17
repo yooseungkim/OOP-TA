@@ -14,53 +14,50 @@ WHITE="\e[0;38m"
 
 # $1: Lab# $2: Ex# $3: Recompile 
 
-if [[ $#<2 ]]; then
+echo $#
+if [ $# < 2 ]; then
     echo -e $RED "Error: not enough arguments (score.sh requires lab# and ex#)" $BLACK
     exit 9
-fi 
 
 LAB_NO=$1
 EX_NO=$2
 RECOMPILE=${3:-false}
-ANSWERS=()
+
+ASDF=()
+
 # READ CORRECT ANSWER
 for ((i=1; i<=$2; i++)); do
-    ANSWER_PATH="$SUBDIR/Lab$1/Answer/ex$1_$i.txt"
-    ANSWERS+=("$(cat $ANSWER_PATH)")
+    PATH="$SUBDIR/Lab$1/Answer/ex$1_$i.txt"
+    echo $PATH
 done
+
 echo "CORRECT ANSWER"
-echo ${ANSWERS[@]}
+for ((i=0; i<$2; i++)); do
+    echo ${ASDF[$i]}
+done 
+
 # READ SUBMITTED ANSWER
 echo "SUBMITTED ANSWER"
-# FOR EACH LAB SESSION
+# FOR EACH LAB SESSION 
 for LAB in $SUBDIR/Lab$1/*; do 
-    if [[ "$LAB" =~ Answer ]]; then continue; fi
-    echo -e $MAGENTA Now On : $LAB $BLACK
+    echo $LAB
     # FOR EACH STUDENT
     for STUDENT in $LAB/*; do
-        # DO NOT COMPILE ON ANSWER DIRECTORY        
+        # DO NOT COMPILE ON ANSWER DIRECTORY
+        if [[ "$STUDENT" =~ Answer ]]; then continue; fi
+        
         echo -e "Checking >> $CYAN $STUDENT $BLACK"
         # COMPILE AND RUN THE SUBMITTED FILE
         for ((i=1; i<=$2; i++)); do
             COMPILE_FILE="$STUDENT/ex$1_$i"
             # IF c++ FILE IS ALREADY COMPILED THEN JUST RUN EXECUTABLE FILE
             if [ $RECOMPILE == true ] || [ ! -e $COMPILE_FILE ]; then
-                g++ $COMPILE_FILE.cpp -o $COMPILE_FILE
+                # g++ $COMPILE_FILE.cpp -o $COMPILE_FILE
+                echo "!"
             fi
             # RUN EXECUTABLE FILE
-            OUTPUT=$(./$COMPILE_FILE)
-
-            # Check whether answer is correct or not
-            if [ "$OUTPUT" == "${ANSWERS[$i - 1]}" ]; then 
-                echo -e $GREEN Correct! $BLACK 
-            else 
-                echo -e $YELLOW Expected: ${ANSWERS[$i - 1]} "<->" Submitted: $OUTPUT $BLACK
-            fi
-
+            OUTPUT=./$COMPILE_FILE 
+            $OUTPUT > test.csv
         done
-        echo 
-        echo 
     done
 done
-
-cd $HOMEDIR
