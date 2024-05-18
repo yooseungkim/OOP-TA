@@ -1,12 +1,12 @@
 1
 1
 ../Submission/Lab1/Lab1/s20215047
-O
-hello world1 hello again!
 X
-hello world1 hello again!
+hello world1 hello again! hello
 X
-hello world1 hello again!
+hello world1 hello again! hello
+X
+hello world1 hello again! hello
 =====NEXT STUDENT=====
 ../Submission/Lab1/Lab1/s20215048
 X

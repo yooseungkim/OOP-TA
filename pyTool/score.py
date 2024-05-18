@@ -30,5 +30,6 @@ with open("./score.txt", "r") as f:
                 student_score.append(line)
 
 for i in range(len(scores)):
-    df = pd.DataFrame(scores[i])
-    df.to_csv("score.csv", index=False, header=False)
+    df = pd.DataFrame(scores[i], columns=[
+                      "STUDENT ID", "TC1", "ANS1", "TC2", "ANS2", "TC3", "ANS3"])
+    df.to_csv(f"ex{lab_no}_{ex_no}.csv", index=False)

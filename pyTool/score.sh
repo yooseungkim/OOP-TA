@@ -45,9 +45,18 @@ for ANSWER_PATH in $SUBDIR/Lab$1/Answer/ex$1_$2_*.txt; do
     ANSWERS+=("$(cat $ANSWER_PATH)")
 done
 
+#for (( i=1; i<=$TC_NO; i++ )); do 
+#    $TESTCASE_FILE=$SUBDIR/Lab$1/Testcase/ex$1_$2_$i.txt
+#    if [ ! -e $TESTCASE_FILE ]; then 
+#        echo "NO INPUT FOR THIS PROGRAM" > $TESTCASE_FILE
+#    fi 
+#    TESTCASES+=($TESTCASE_FILE) 
+#done
+
 for TESTCASE_PATH in $SUBDIR/Lab$1/Testcase/ex$1_$2_*.txt; do
     TESTCASES+=("$TESTCASE_PATH")
 done
+
 # READ SUBMITTED ANSWER
 # FOR EACH LAB SESSION
 for LAB in $SUBDIR/Lab$1/*; do 
@@ -64,7 +73,9 @@ for LAB in $SUBDIR/Lab$1/*; do
             COMPILE_FILE="$STUDENT/ex$1_$2"
             # IF c++ FILE IS ALREADY COMPILED THEN JUST RUN EXECUTABLE FILE
             if [[ $RECOMPILE == true ]] || [ ! -e $COMPILE_FILE ]; then
-                g++ $COMPILE_FILE.cpp -o $COMPILE_FILE 
+                # compile all files with format ex1_1_*.cpp (to use header files) 
+                # all source files should be named of the format ex1_1_Car.cpp
+                g++ $COMPILE_FILE*.cpp -o $COMPILE_FILE
                 if  [ $? -ne 0 ]; then 
                     echo -e $RED"Raised Error"$BLACK
                     echo "X" >> $SAVE_TXT 
@@ -94,5 +105,6 @@ for LAB in $SUBDIR/Lab$1/*; do
     echo "=====NEXT SESSION=====" >> $SAVE_TXT
 done
 echo "=====COMPLETE=====" >> $SAVE_TXT
-cd $HOMEDIR
+
+python score.py
 
