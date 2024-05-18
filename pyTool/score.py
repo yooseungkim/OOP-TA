@@ -1,4 +1,5 @@
 import pandas as pd
+import openpyxl
 
 scores = []
 session_scores = []
@@ -27,3 +28,7 @@ with open("./score.txt", "r") as f:
                 student_score.append(get_last(line))
             else:
                 student_score.append(line)
+
+for i in range(len(scores)):
+    df = pd.DataFrame(scores[i])
+    df.to_csv("score.csv", index=False, header=False)

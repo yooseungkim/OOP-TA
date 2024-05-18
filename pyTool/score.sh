@@ -11,6 +11,11 @@ CYAN="\e[0;36m"
 GRAY="\e[0;37m"
 WHITE="\e[0;38m"
 
+# install openpyxl
+pip3 install openpyxl
+
+
+
 # clear logs 
 clear
 
