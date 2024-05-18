@@ -1,9 +1,12 @@
 #include <iostream> 
-
+#include <string> 
 using namespace std; 
 
 int main() {
-    cout << "1, 2, 3, 4, 5" << endl;
-    cout << "6, 7, 8, 9, 10" << endl;
+    string str; 
+    cin >> str; 
+    cout << str << endl; 
+    cin >> str; 
+    cout << str << endl; 
     return 0;
 }
