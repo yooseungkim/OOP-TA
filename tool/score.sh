@@ -11,6 +11,8 @@ CYAN="\e[0;36m"
 GRAY="\e[0;37m"
 WHITE="\e[0;38m"
 
+# string join function
+function join_by { local IFS="$1"; shift; echo "$*"; }
 
 # $1: Lab# $2: Ex# $3: Recompile 
 
@@ -23,6 +25,7 @@ LAB_NO=$1
 EX_NO=$2
 RECOMPILE=${3:-false}
 ANSWERS=()
+RESULTS=() 
 # READ CORRECT ANSWER
 for ((i=1; i<=$2; i++)); do
     ANSWER_PATH="$SUBDIR/Lab$1/Answer/ex$1_$i.txt"
@@ -40,6 +43,7 @@ for LAB in $SUBDIR/Lab$1/*; do
     for STUDENT in $LAB/*; do
         # DO NOT COMPILE ON ANSWER DIRECTORY        
         echo -e "Checking >> $CYAN $STUDENT $BLACK"
+        TEMP_RESULT=()
         # COMPILE AND RUN THE SUBMITTED FILE
         for ((i=1; i<=$2; i++)); do
             COMPILE_FILE="$STUDENT/ex$1_$i"
@@ -53,14 +57,20 @@ for LAB in $SUBDIR/Lab$1/*; do
             # Check whether answer is correct or not
             if [ "$OUTPUT" == "${ANSWERS[$i - 1]}" ]; then 
                 echo -e $GREEN Correct! $BLACK 
+                TEMP_RESULT+=("O")
+                TEMP_RESULT+=("$OUTPUT")
+                
             else 
                 echo -e $YELLOW Expected: ${ANSWERS[$i - 1]} "<->" Submitted: $OUTPUT $BLACK
+                TEMP_RESULT+=("X")
+                TEMP_RESULT+=("$OUTPUT")
             fi
-
         done
-        echo 
-        echo 
+        join_by ,  "${TEMP_RESULT[@]}"
+        RESULTS+=$TEMP_RESULT
+        
     done
 done
-
 cd $HOMEDIR
+
+echo "1 2 3 4 5" >> score.csv
