@@ -1,3 +1,3 @@
 g++ main.cpp -o main 
 
-cat main.txt | ./main
+./main < main.txt

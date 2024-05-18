@@ -1,103 +1,103 @@
 1
-3
+1
 ../Submission/Lab1/Lab1/s20215047
 O
 hello world1 hello again!
-O
-hello world2
-O
-hello world3
+X
+hello world1 hello again!
+X
+hello world1 hello again!
 =====NEXT STUDENT=====
 ../Submission/Lab1/Lab1/s20215048
 X
-hello world1
-O
-hello world2
-O
-hello world3
+hello
+X
+hello
+X
+hello
 =====NEXT STUDENT=====
 ../Submission/Lab1/Lab1/s20215049
 X
 hello world1
 O
-hello world2
+hello world1
 O
-hello world3
+hello world1
 =====NEXT STUDENT=====
 =====NEXT SESSION=====
 ../Submission/Lab1/Lab2/s20215047
 X
 hello world1
 O
-hello world2
+hello world1
 O
-hello world3
+hello world1
 =====NEXT STUDENT=====
 ../Submission/Lab1/Lab2/s20215048
 X
 hello world1
 O
-hello world2
+hello world1
 O
-hello world3
+hello world1
 =====NEXT STUDENT=====
 ../Submission/Lab1/Lab2/s20215049
 X
 hello world1
 O
-hello world2
+hello world1
 O
-hello world3
+hello world1
 =====NEXT STUDENT=====
 =====NEXT SESSION=====
 ../Submission/Lab1/Lab3/s20215047
 X
 hello world1
 O
-hello world2
+hello world1
 O
-hello world3
+hello world1
 =====NEXT STUDENT=====
 ../Submission/Lab1/Lab3/s20215048
 X
 hello world1
 O
-hello world2
+hello world1
 O
-hello world3
+hello world1
 =====NEXT STUDENT=====
 ../Submission/Lab1/Lab3/s20215049
 X
 hello world1
 O
-hello world2
+hello world1
 O
-hello world3
+hello world1
 =====NEXT STUDENT=====
 =====NEXT SESSION=====
 ../Submission/Lab1/Lab4/s20215047
 X
 hello world1
 O
-hello world2
+hello world1
 O
-hello world3
+hello world1
 =====NEXT STUDENT=====
 ../Submission/Lab1/Lab4/s20215048
 X
 hello world1
 O
-hello world2
+hello world1
 O
-hello world3
+hello world1
 =====NEXT STUDENT=====
 ../Submission/Lab1/Lab4/s20215049
 X
 hello world1
 O
-hello world2
+hello world1
 O
-hello world3
+hello world1
 =====NEXT STUDENT=====
 =====NEXT SESSION=====
 =====COMPLETE=====
