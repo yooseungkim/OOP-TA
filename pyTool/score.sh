@@ -31,7 +31,7 @@ LAB_NO=$1
 EX_NO=$2
 declare -i TC_NO=0 
 RECOMPILE=${3:-false}
-SAVE_TXT=${4:-"score.txt"}
+SAVE_TXT=${4:-"ex$1_$2_score.txt"}
 ANSWERS=()
 TESTCASES=() 
 
@@ -45,17 +45,17 @@ for ANSWER_PATH in $SUBDIR/Lab$1/Answer/ex$1_$2_*.txt; do
     ANSWERS+=("$(cat $ANSWER_PATH)")
 done
 
-#for (( i=1; i<=$TC_NO; i++ )); do 
-#    $TESTCASE_FILE=$SUBDIR/Lab$1/Testcase/ex$1_$2_$i.txt
-#    if [ ! -e $TESTCASE_FILE ]; then 
-#        echo "NO INPUT FOR THIS PROGRAM" > $TESTCASE_FILE
-#    fi 
-#    TESTCASES+=($TESTCASE_FILE) 
-#done
-
-for TESTCASE_PATH in $SUBDIR/Lab$1/Testcase/ex$1_$2_*.txt; do
-    TESTCASES+=("$TESTCASE_PATH")
+for (( i=1; i<=$TC_NO; i++ )); do 
+   TESTCASE_FILE=$SUBDIR/Lab$1/Testcase/ex$1_$2_$i.txt
+   if [ ! -e $TESTCASE_FILE ]; then 
+       echo "NO INPUT FOR THIS PROGRAM" > $TESTCASE_FILE
+   fi 
+   TESTCASES+=("$TESTCASE_FILE") 
 done
+
+# for TESTCASE_PATH in $SUBDIR/Lab$1/Testcase/ex$1_$2_*.txt; do
+#     TESTCASES+=("$TESTCASE_PATH")
+# done
 
 # READ SUBMITTED ANSWER
 # FOR EACH LAB SESSION
