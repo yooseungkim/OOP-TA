@@ -11,11 +11,7 @@ CYAN="\e[0;36m"
 GRAY="\e[0;37m"
 WHITE="\e[0;38m"
 
-# install openpyxl
-pip3 install openpyxl
-
-
-
+#check openpyxl installed
 # clear logs 
 clear
 
@@ -33,25 +29,36 @@ function join_by { local IFS="$1"; shift; echo "$*" >> score.txt; }
 
 LAB_NO=$1
 EX_NO=$2
+declare -i TC_NO=0 
 RECOMPILE=${3:-false}
-SAVE_TXT=${4:-"score.txt"}
+SAVE_TXT=${4:-"ex$1_$2_score.txt"}
 ANSWERS=()
-RESULTS=() 
+TESTCASES=() 
 
 # INIT SCORE FILE
 rm $SAVE_TXT
-echo $1 >> $SAVE_TXT
-echo $2 >> $SAVE_TXT
 # READ CORRECT ANSWER
-for ((i=1; i<=$2; i++)); do
-    ANSWER_PATH="$SUBDIR/Lab$1/Answer/ex$1_$i.txt"
+for ANSWER_PATH in $SUBDIR/Lab$1/Answer/ex$1_$2_*.txt; do
+    TC_NO+=1
     ANSWERS+=("$(cat $ANSWER_PATH)")
 done
+
+for (( i=1; i<=$TC_NO; i++ )); do 
+   TESTCASE_FILE=$SUBDIR/Lab$1/Testcase/ex$1_$2_$i.txt
+   if [ ! -e $TESTCASE_FILE ]; then 
+       echo "NO INPUT FOR THIS PROGRAM" > $TESTCASE_FILE
+   fi 
+   TESTCASES+=("$TESTCASE_FILE") 
+done
+
+# for TESTCASE_PATH in $SUBDIR/Lab$1/Testcase/ex$1_$2_*.txt; do
+#     TESTCASES+=("$TESTCASE_PATH")
+# done
 
 # READ SUBMITTED ANSWER
 # FOR EACH LAB SESSION
 for LAB in $SUBDIR/Lab$1/*; do 
-    if [[ "$LAB" =~ Answer ]]; then continue; fi
+    if [[ "$LAB" =~ Answer || "$LAB" =~ Testcase ]] ; then continue; fi
     echo -e $MAGENTA Now On : $LAB $BLACK
     # echo $LAB >> $SAVE_TXT 
     # FOR EACH STUDENT
@@ -60,11 +67,13 @@ for LAB in $SUBDIR/Lab$1/*; do
         echo -e "Checking >> $CYAN $STUDENT $BLACK"
         echo $STUDENT >> $SAVE_TXT
         # COMPILE AND RUN THE SUBMITTED FILE
-        for ((i=1; i<=$2; i++)); do
-            COMPILE_FILE="$STUDENT/ex$1_$i"
+        for ((i=1; i<=$TC_NO; i++)); do
+            COMPILE_FILE="$STUDENT/ex$1_$2"
             # IF c++ FILE IS ALREADY COMPILED THEN JUST RUN EXECUTABLE FILE
             if [[ $RECOMPILE == true ]] || [ ! -e $COMPILE_FILE ]; then
-                g++ $COMPILE_FILE.cpp -o $COMPILE_FILE 
+                # compile all files with format ex1_1_*.cpp (to use header files) 
+                # all source files should be named of the format ex1_1_Car.cpp
+                g++ $COMPILE_FILE*.cpp -o $COMPILE_FILE
                 if  [ $? -ne 0 ]; then 
                     echo -e $RED"Raised Error"$BLACK
                     echo "X" >> $SAVE_TXT 
@@ -73,26 +82,34 @@ for LAB in $SUBDIR/Lab$1/*; do
                 fi 
             fi
             # RUN EXECUTABLE FILE
-            OUTPUT=$(./$COMPILE_FILE)
+            OUTPUT=$(cat ${TESTCASES[$i - 1]} | ./$COMPILE_FILE)
 
             # Check whether answer is correct or not
             if [ "$OUTPUT" == "${ANSWERS[$i - 1]}" ]; then 
-                echo -e $GREEN"Correct!"$BLACK 
+                echo -e $GREEN"[$i] Correct!"$BLACK 
                 echo "O" >> $SAVE_TXT
                 echo $OUTPUT >> $SAVE_TXT
-                
             else 
-                echo -e $YELLOW "Expected: "${ANSWERS[$i - 1]} "<-> Submitted: "$OUTPUT$BLACK
+                echo -e $RED[$i]$YELLOW" Expected: "${ANSWERS[$i - 1]} "<-> Submitted: "$OUTPUT$BLACK
                 echo "X" >> $SAVE_TXT
                 echo $OUTPUT >> $SAVE_TXT
             fi
         done
-        # join_by ,  "${TEMP_RESULT[@]}"
-        # RESULTS+=("$TEMP_RESULT")
         echo "=====NEXT STUDENT=====" >> $SAVE_TXT
     done
     echo "=====NEXT SESSION=====" >> $SAVE_TXT
 done
 echo "=====COMPLETE=====" >> $SAVE_TXT
-cd $HOMEDIR
+# COMPLETE SCORING 
+echo -e $MAGENTA"SCORING COMPLETED"$BLACK
+# EXPORT CSV FILE - SCORE.PY
+echo -e $CYAN"EXPORTING CSV FILE..."$BLACK 
+python score.py $1 $2
+
+# CHECK WHETHER SCORE.PY HAS SUCCESSFULLY TERMINATED
+if [ $? -ne 0 ]; then 
+    echo -e $RED"Couldn't Finish Exporting CSV File"$BLACK ... Please Check score.py
+else
+    echo -e $BLUE"Finished Exporting CSV File"$BLACK 
+fi
 
