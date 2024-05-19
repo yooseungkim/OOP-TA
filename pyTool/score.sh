@@ -37,8 +37,6 @@ TESTCASES=()
 
 # INIT SCORE FILE
 rm $SAVE_TXT
-echo $1 >> $SAVE_TXT
-echo $2 >> $SAVE_TXT
 # READ CORRECT ANSWER
 for ANSWER_PATH in $SUBDIR/Lab$1/Answer/ex$1_$2_*.txt; do
     TC_NO+=1
@@ -91,20 +89,27 @@ for LAB in $SUBDIR/Lab$1/*; do
                 echo -e $GREEN"[$i] Correct!"$BLACK 
                 echo "O" >> $SAVE_TXT
                 echo $OUTPUT >> $SAVE_TXT
-                
             else 
                 echo -e $RED[$i]$YELLOW" Expected: "${ANSWERS[$i - 1]} "<-> Submitted: "$OUTPUT$BLACK
                 echo "X" >> $SAVE_TXT
                 echo $OUTPUT >> $SAVE_TXT
             fi
         done
-        # join_by ,  "${TEMP_RESULT[@]}"
-        # RESULTS+=("$TEMP_RESULT")
         echo "=====NEXT STUDENT=====" >> $SAVE_TXT
     done
     echo "=====NEXT SESSION=====" >> $SAVE_TXT
 done
 echo "=====COMPLETE=====" >> $SAVE_TXT
+# COMPLETE SCORING 
+echo -e $MAGENTA"SCORING COMPLETED"$BLACK
+# EXPORT CSV FILE - SCORE.PY
+echo -e $CYAN"EXPORTING CSV FILE..."$BLACK 
+python score.py $1 $2
 
-python score.py
+# CHECK WHETHER SCORE.PY HAS SUCCESSFULLY TERMINATED
+if [ $? -ne 0 ]; then 
+    echo -e $RED"Couldn't Finish Exporting CSV File"$BLACK ... Please Check score.py
+else
+    echo -e $BLUE"Finished Exporting CSV File"$BLACK 
+fi
 
