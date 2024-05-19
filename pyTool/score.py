@@ -7,8 +7,8 @@ student_score = []
 columns = ["SESSION NO", "STUDENT ID"]
 
 lab_no, ex_no = sys.argv[1], sys.argv[2]
-TXT_PATH = f"./ex{lab_no}_{ex_no}_score.txt"
-CSV_PATH = f"./ex{lab_no}_{ex_no}.csv"
+TXT_PATH = f"../Scores/Lab{lab_no}/ex{lab_no}_{ex_no}_score.txt"
+CSV_PATH = f"../Scores/Lab{lab_no}/ex{lab_no}_{ex_no}.csv"
 
 
 def get_last(string: str, parse: str = "/") -> str:

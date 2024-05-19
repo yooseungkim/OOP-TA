@@ -24,23 +24,31 @@ if [[ $# < 2 ]]; then
     exit 9
 fi 
 
-# string join function
-function join_by { local IFS="$1"; shift; echo "$*" >> score.txt; }
+# MAKE DIRECTORY IF IT DOES NOT EXSIT
+if [ ! -d ../Scores/Lab$1 ]; then   
+    mkdir ../Scores/Lab$1
+fi
 
 LAB_NO=$1
 EX_NO=$2
 declare -i TC_NO=0 
 RECOMPILE=${3:-false}
-SAVE_TXT=${4:-"ex$1_$2_score.txt"}
+SAVE_TXT=${4:-"../Scores/Lab$1/ex$1_$2_score.txt"}
 ANSWERS=()
 TESTCASES=() 
 
 # INIT SCORE FILE
-rm $SAVE_TXT
+if [ -e $SAVE_TXT ]; then 
+    rm $SAVE_TXT
+fi
 # READ CORRECT ANSWER
 for ANSWER_PATH in $SUBDIR/Lab$1/Answer/ex$1_$2_*.txt; do
     TC_NO+=1
     ANSWERS+=("$(cat $ANSWER_PATH)")
+    if [ $? -ne 0 ]; then 
+        echo -e $RED"Answer File Does Not Exist"$BLACK
+        exit 9
+    fi
 done
 
 for (( i=1; i<=$TC_NO; i++ )); do 
@@ -59,7 +67,7 @@ done
 # FOR EACH LAB SESSION
 for LAB in $SUBDIR/Lab$1/*; do 
     if [[ "$LAB" =~ Answer || "$LAB" =~ Testcase ]] ; then continue; fi
-    echo -e $MAGENTA Now On : $LAB $BLACK
+    echo -e $MAGENTA"Now On : "$LAB $BLACK
     # echo $LAB >> $SAVE_TXT 
     # FOR EACH STUDENT
     for STUDENT in $LAB/*; do
@@ -98,6 +106,7 @@ for LAB in $SUBDIR/Lab$1/*; do
         echo "=====NEXT STUDENT=====" >> $SAVE_TXT
     done
     echo "=====NEXT SESSION=====" >> $SAVE_TXT
+    echo ================================================
 done
 echo "=====COMPLETE=====" >> $SAVE_TXT
 # COMPLETE SCORING 
@@ -110,6 +119,7 @@ python score.py $1 $2
 if [ $? -ne 0 ]; then 
     echo -e $RED"Couldn't Finish Exporting CSV File"$BLACK ... Please Check score.py
 else
-    echo -e $BLUE"Finished Exporting CSV File"$BLACK 
+    echo -e $CYAN"Finished Exporting CSV File"$BLACK 
 fi
 
+echo -e $BLUE"Terminating Scoring Program Successfully"$BLACK
