@@ -33,9 +33,11 @@ with open(TXT_PATH, "r") as f:
                 student_score = [session, get_last(line)]
             else:
                 student_score.append(line)
+
 testcases = (len(scores[0]) - 2) // 2
+
 for i in range(testcases):
-    columns += [f"TC{i + 1}", f"ANS{i + 1}"]
+    columns += [f"TC{ex_no}_{i + 1}", f"ANS{ex_no}_{i + 1}"]
 df = pd.DataFrame(scores, columns=columns)
 print(df)
 df.to_csv(CSV_PATH, index=False)

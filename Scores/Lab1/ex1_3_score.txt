@@ -1,12 +1,24 @@
 ../Submission/Lab1/Lab1/s20215047
 O
 hello world3
+O
+hello world3
+O
+hello world3
 =====NEXT STUDENT=====
 ../Submission/Lab1/Lab1/s20215048
 O
 hello world3
+O
+hello world3
+O
+hello world3
 =====NEXT STUDENT=====
 ../Submission/Lab1/Lab1/s20215049
+O
+hello world3
+O
+hello world3
 O
 hello world3
 =====NEXT STUDENT=====
@@ -14,12 +26,24 @@ hello world3
 ../Submission/Lab1/Lab2/s20215047
 O
 hello world3
+O
+hello world3
+O
+hello world3
 =====NEXT STUDENT=====
 ../Submission/Lab1/Lab2/s20215048
 O
 hello world3
+O
+hello world3
+O
+hello world3
 =====NEXT STUDENT=====
 ../Submission/Lab1/Lab2/s20215049
+O
+hello world3
+O
+hello world3
 O
 hello world3
 =====NEXT STUDENT=====
@@ -27,12 +51,24 @@ hello world3
 ../Submission/Lab1/Lab3/s20215047
 O
 hello world3
+O
+hello world3
+O
+hello world3
 =====NEXT STUDENT=====
 ../Submission/Lab1/Lab3/s20215048
 O
 hello world3
+O
+hello world3
+O
+hello world3
 =====NEXT STUDENT=====
 ../Submission/Lab1/Lab3/s20215049
+O
+hello world3
+O
+hello world3
 O
 hello world3
 =====NEXT STUDENT=====
@@ -40,12 +76,24 @@ hello world3
 ../Submission/Lab1/Lab4/s20215047
 O
 hello world3
+O
+hello world3
+O
+hello world3
 =====NEXT STUDENT=====
 ../Submission/Lab1/Lab4/s20215048
 O
 hello world3
+O
+hello world3
+O
+hello world3
 =====NEXT STUDENT=====
 ../Submission/Lab1/Lab4/s20215049
+O
+hello world3
+O
+hello world3
 O
 hello world3
 =====NEXT STUDENT=====

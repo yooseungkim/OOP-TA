@@ -1,13 +1,13 @@
-SESSION NO,STUDENT ID,TC1,ANS1
-1,s20215047,O,hello world3
-1,s20215048,O,hello world3
-1,s20215049,O,hello world3
-2,s20215047,O,hello world3
-2,s20215048,O,hello world3
-2,s20215049,O,hello world3
-3,s20215047,O,hello world3
-3,s20215048,O,hello world3
-3,s20215049,O,hello world3
-4,s20215047,O,hello world3
-4,s20215048,O,hello world3
-4,s20215049,O,hello world3
+SESSION NO,STUDENT ID,TC3_1,ANS3_1,TC3_2,ANS3_2,TC3_3,ANS3_3
+1,s20215047,O,hello world3,O,hello world3,O,hello world3
+1,s20215048,O,hello world3,O,hello world3,O,hello world3
+1,s20215049,O,hello world3,O,hello world3,O,hello world3
+2,s20215047,O,hello world3,O,hello world3,O,hello world3
+2,s20215048,O,hello world3,O,hello world3,O,hello world3
+2,s20215049,O,hello world3,O,hello world3,O,hello world3
+3,s20215047,O,hello world3,O,hello world3,O,hello world3
+3,s20215048,O,hello world3,O,hello world3,O,hello world3
+3,s20215049,O,hello world3,O,hello world3,O,hello world3
+4,s20215047,O,hello world3,O,hello world3,O,hello world3
+4,s20215048,O,hello world3,O,hello world3,O,hello world3
+4,s20215049,O,hello world3,O,hello world3,O,hello world3

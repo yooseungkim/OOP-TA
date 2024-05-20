@@ -20,9 +20,9 @@ if [[ $1 == -h ]]; then
     exit 0 
 fi
 
-if [[ $# < 2 ]]; then
-    echo -e $RED "Error: not enough arguments (score.sh requires lab# and ex#)" $BLACK
-    exit 9
+if [[ $# < 3 ]]; then
+    echo -e $RED "Error: not enough arguments (score.sh requires lab#, ex#, tc#)" $BLACK
+    exit 1
 fi 
 
 
@@ -45,8 +45,8 @@ while getopts 'rnvh' flag; do
     v) VERBOSE='true' ;;
     h) 
         echo -e $YELLOW"score.sh help message"$BLACK
-        echo -e $MAGENTA"Usage$BLACK: ./score.sh $MAGENTA#(lab_no) #(ex_no)$BLACK"
-        echo Example: ./score.sh 1 3 -r -n
+        echo -e $MAGENTA"Usage$BLACK: ./score.sh $MAGENTA#(lab) #(ex) #(testcases)$BLACK"
+        echo Example: ./score.sh 1 3 3 -r -n
         echo flags: 
         echo -e $MAGENTA'\t'-r$BLACK: recompile the submitted source files 
         echo -e $MAGENTA'\t'-n$BLACK: use when there is no certain answer 
@@ -80,19 +80,20 @@ fi
 # IF -n FLAG, SCORE WITHOUT ANSWER FILE 
 if [[ $NO_ANSWER == 'true' ]]; then 
     echo "Scoring without Answer File"
+else
+    # READ CORRECT ANSWER
+    for ANSWER_PATH in $SUBDIR/Lab${LAB_NO}/Answer/ex${LAB_NO}_${EX_NO}_*.txt; do
+        # CHECK # TEST CASES
+        # APPEND ANSWER INTO ANSWERS ARRAY 
+        ANSWERS+=("$(cat $ANSWER_PATH)")
+        # IF THERE SHOULD BE ANSWER FILE BUT NO ANSWER FILE, RAISE ERROR 
+        if [ $? -ne 0 ]; then 
+            echo -e $RED"Answer File Does Not Exist"$BLACK
+            exit 1
+        fi
+    done
 fi
-# READ CORRECT ANSWER
-for ANSWER_PATH in $SUBDIR/Lab${LAB_NO}/Answer/ex${LAB_NO}_${EX_NO}_*.txt; do
-    # CHECK # TEST CASES
-    # APPEND ANSWER INTO ANSWERS ARRAY 
-    ANSWERS+=("$(cat $ANSWER_PATH)")
-    # IF THERE SHOULD BE ANSWER FILE BUT NO ANSWER FILE, RAISE ERROR 
-    if [ $? -ne 0 ] && [[ $NO_ANSWER == 'true' ]]; then 
-        echo -e $RED"Answer File Does Not Exist"$BLACK
-        exit 9
-    fi
-done
- 
+
 # ECHO RECOMPILE OPTION 
 if [[ $RECOMPILE == 'true' ]]; then 
     echo "Recompile the Source Files"
@@ -127,14 +128,33 @@ for LAB in $SUBDIR/Lab${LAB_NO}/*; do
         if [[ $RECOMPILE == 'true' ]] || [ ! -e $COMPILE_FILE ]; then
             # compile all files with format ex1_1_*.cpp (to use header files) 
             # all source files should be named of the format ex1_1_Car.cpp
+            
+            # IF NO SOURCE FILE IS SUBMITTED THEN 
+            if  [ ! -e "$COMPILE_FILE.cpp" ]; then 
+                echo -e $RED"NO SUBMISSION"$BLACK
+                for ((i=1; i<=$TC_NO; i++)); do
+                    # REGARD AS INCORRECT ANSWER 
+                    echo "X" >> $SAVE_TXT 
+                    echo "No Submission" >> $SAVE_TXT
+                done  
+                echo 
+                echo "=====NEXT STUDENT=====" >> $SAVE_TXT
+                continue 
+            fi 
+            
+            
             g++ $COMPILE_FILE*.cpp -o $COMPILE_FILE
 
             # IF COMPILE FAILED, THEN RAISE "COMPILE ERROR"
             if  [ $? -ne 0 ]; then 
-                echo -e $RED"COMPILE Error"$BLACK
-                # REGARD AS INCORRECT ANSWER 
-                echo "X" >> $SAVE_TXT 
-                echo "Compile Error" >> $SAVE_TXT 
+                echo -e $RED"COMPILE Error"$BLACK       
+                for ((i=1; i<=$TC_NO; i++)); do
+                    # REGARD AS INCORRECT ANSWER 
+                    echo "X" >> $SAVE_TXT 
+                    echo "Compile Error" >> $SAVE_TXT
+                done  
+                echo 
+                echo "=====NEXT STUDENT=====" >> $SAVE_TXT
                 continue 
             fi 
         fi
@@ -185,7 +205,9 @@ python score.py $LAB_NO $EX_NO
 # CHECK WHETHER score.py HAS SUCCESSFULLY TERMINATED
 if [ $? -ne 0 ]; then 
     echo -e $RED"Couldn't Finish Exporting CSV File"$BLACK ... Please Check score.py
+    exit 1
 else
     echo -e $CYAN"Finished Exporting CSV File"$BLACK 
     echo -e $BLUE"Terminating Scoring Program Successfully"$BLACK
+    exit 0
 fi
