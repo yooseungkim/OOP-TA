@@ -36,6 +36,6 @@ with open(TXT_PATH, "r") as f:
 testcases = (len(scores[0]) - 2) // 2
 for i in range(testcases):
     columns += [f"TC{i + 1}", f"ANS{i + 1}"]
-for i in range(len(scores)):
-    df = pd.DataFrame(scores, columns=columns)
-    df.to_csv(CSV_PATH, index=False)
+df = pd.DataFrame(scores, columns=columns)
+print(df)
+df.to_csv(CSV_PATH, index=False)
