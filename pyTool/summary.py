@@ -2,8 +2,12 @@ import sys
 import pandas as pd
 from functools import reduce
 
-labs, exs = int(sys.argv[1]), int(sys.argv[2])
-
+labs = int(sys.argv[1])
+try:
+    exs = int(sys.argv[2])
+except IndexError:
+    exs = 3
+    
 directory = f"../Scores/Lab{labs}/"
 
 dfs = []
@@ -15,6 +19,5 @@ df_merged = reduce(lambda left, right: pd.merge(left, right, on=['STUDENT ID', '
                                                 how='outer'), dfs)
 
 df = df_merged.iloc[:, [0, 1] + list(range(2, len(df_merged.columns), 2))]
-print(df)
 
 df.to_csv(directory+f"Lab{labs}.csv", index=False)
