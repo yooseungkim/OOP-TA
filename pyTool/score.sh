@@ -58,10 +58,8 @@ while getopts 'rnvh' flag; do
   esac
 done
 
-# clear logs 
-clear
 
-echo -e $BLUE"Start Scoring Program..."$BLACK
+echo -e $BLUE"Starting Scoring Program..."$BLACK
 
 SAVE_TXT="../Scores/Lab${LAB_NO}/ex${LAB_NO}_${EX_NO}_score.txt"
 ANSWERS=()

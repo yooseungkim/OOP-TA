@@ -24,10 +24,11 @@ TESTCASE_PATH="$SUBDIR/Lab${LAB_NO}/Testcase"
 clear 
 
 echo -e $BLUE"Starting Integrated Marking Program"$BLACK
+
 while getopts 'ihs' flag; do
   case "${flag}" in
     i)
-        echo -e $MAGENTA"Using Existing Testcases"$BLACK
+        echo -e $MAGENTA"Input New Testcases"$BLACK
         DEFAULT='false'
         ;;  
     h) 
@@ -35,7 +36,7 @@ while getopts 'ihs' flag; do
         echo -e $MAGENTA"Usage$BLACK: ./mark.sh $MAGENTA#(lab) #(ex) #(testcases)$BLACK"
         echo Example: ./mark.sh 1 3 3 -i
         echo flags: 
-        echo -e $MAGENTA'\t'-i$BLACK: use existing test cases
+        echo -e $MAGENTA'\t'-i$BLACK: make new testcases
         echo -e $MAGENTA'\t'-h$BLACK: show help message
         exit 1;; 
     s)
