@@ -24,27 +24,27 @@ while getopts 'ih' flag; do
   case "${flag}" in
     i)
         if [ -e $ANSWER_PATH ]; then
-            echo -e $MAGENTA"Add Testcases to Exsisting Testcases"$BLACK
+            printf $MAGENTA"Add Testcases to Exsisting Testcases"$BLACK
             DEFAULT=$(find $ANSWER_PATH -name "*." -type f | wc -l)
         else
-            echo -e $MAGENTA"No Testcases Found"$BLACK 
+            printf $MAGENTA"No Testcases Found"$BLACK 
         fi;;
     h) 
-        echo -e $YELLOW"score.sh help message"$BLACK
-        echo -e $MAGENTA"Usage$BLACK: ./input.sh $MAGENTA#(lab) #(ex) #(testcases)$BLACK"
-        echo Example: ./input.sh 1 3 3 -i
-        echo flags: 
-        echo -e $MAGENTA'\t'-i$BLACK: use existing test cases
-        echo -e $MAGENTA'\t'-h$BLACK: show help message
+        printf $YELLOW"score.sh help message"$BLACK"\n"
+        printf $MAGENTA"Usage$BLACK: ./input.sh $MAGENTA#(lab) #(ex) #(testcases)$BLACK\n"
+        printf "Example: ./input.sh 1 3 3 -i\n"
+        printf "flags:\n"
+        printf $MAGENTA"\t-i$BLACK: use existing test cases\n"
+        printf $MAGENTA"\t-h$BLACK: show help message\n"
         exit 1;; 
     *) 
-        echo -e $RED"Invalid Flag"$BLACK
+        printf $RED"Invalid Flag\n"$BLACK
         exit 1 ;;
   esac
 done
 
 if [[ $DEFAULT == 0 ]]; then
-    echo -e $MAGENTA"Initializing Testcase/Answer Directory"$BLACK
+    printf $MAGENTA"Initializing Testcase/Answer Directory\n"$BLACK
     rm -rf $ANSWER_PATH
     rm -rf $TESTCASE_PATH
     mkdir $ANSWER_PATH
