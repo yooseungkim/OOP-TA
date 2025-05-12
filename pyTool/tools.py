@@ -1,6 +1,7 @@
 import pandas as pd
 import sys
 import os
+import subprocess
 
 BLACK = "\\e[0;30m"
 RED = "\\e[0;31m"
@@ -26,13 +27,36 @@ def _copyright():
 
 
 class Testcase:
-    def __init__(self, lab, ex, tc_no):
+    def __init__(self, lab, ex, tc_no, tc, answer):
+        self.lab = lab
+        self.ex = ex
+        self.tc_no = tc_no
+        self.input = tc
+        self.output = answer
+        self.padding = 50
+
+    def __repr__(self):
+        self.preview()
+        return ""
+
+    def preview(self) -> None:
+        self.tc = '\n' + self.tc if '\n' in self.tc else self.tc
+        answer = '\n' + answer if '\n' in answer else answer
+        printf(
+            f"LAB{self.lab} EX{self.ex}-{self.tc_no}".center(self.padding, "-"), WHITE)
+        printf(f"{CYAN}TESTCASE{WHITE}: {self.input if self.input else 'No Input'}")
+        printf(f"{RED}ANSWER{WHITE}  : {self.output if self.output else 'No Output'}")
+
+
+class TestcaseManager:
+    def __init__(self, lab: int, ex: int, tc_no: int):
         self.lab = lab
         self.ex = ex
         self.n = tc_no
+        self.changes = set()
         self.testcases = {}
         self.answers = {}
-        self.padding = 45
+        self.padding = 50
         self.read_testcases()
         self.program()
 
@@ -42,7 +66,7 @@ class Testcase:
     def tc_path(self, tc):
         return f"../Submission/Lab{self.lab}/Testcase/ex{self.lab}_{self.ex}_{tc}.txt"
 
-    def preview(self, tc_no):
+    def preview(self, tc_no: int) -> None:
         tc = self.testcases[tc_no]
         answer = self.answers[tc_no]
         tc = '\n' + tc if '\n' in tc else tc
@@ -52,7 +76,7 @@ class Testcase:
         printf(f"{CYAN}TESTCASE{WHITE}: {tc if answer else 'No Input'}")
         printf(f"{RED}ANSWER{WHITE}  : {answer if answer else 'No Output'}")
 
-    def read_testcases(self):
+    def read_testcases(self) -> None:
         printf("Current Testcases".center(self.padding, "="), YELLOW)
         for i in range(1, self.n + 1):
             try:
@@ -71,15 +95,22 @@ class Testcase:
             self.preview(i)
         printf("=" * self.padding, YELLOW)
 
-    def append_testcase(self):
+    def append_testcase(self) -> None:
         tc = input("Enter Testcase Input: ").strip()
         answer = input("Enter Testcase Answer: ").strip()
 
         self.n += 1
         self.testcases[self.n] = tc
         self.answers[self.n] = answer
+        self.changes.add(self.n)
 
-    def publish(self):
+    def publish(self) -> None:
+        if len(self.changes) == 0:
+            printf("Nothing to Save")
+            return
+
+        printf(
+            f"Changes on Testcase #[{', '.join(map(str, list(self.changes)))}] - Total: {len(self.changes)}")
         printf("Are You Sure to Save Changes?[Y,y/N]", end="")
         printf("[It cannot be Undone]", RED)
 
@@ -94,7 +125,9 @@ class Testcase:
         else:
             printf("To preview changes, press [1]")
 
-    def modify(self):
+        self.changes.clear()
+
+    def modify(self) -> None:
         tc_no = input("Enter Testcase #: ")
         try:
             tc_no = int(tc_no)
@@ -111,6 +144,7 @@ class Testcase:
         self.answers[tc_no] = answer
         printf("Modified".center(self.padding), YELLOW)
         self.preview(tc_no)
+        self.changes.add(tc_no)
 
         printf("Successfully Modified!", GREEN)
 
@@ -118,8 +152,9 @@ class Testcase:
         while True:
             try:
                 answer = int(
-                    input("[1]Preview [2]Add [3]Save [4]Modify [0]Exit: "))
+                    input(f"[1]Preview [2]Add [3]Save{f'({len(self.changes)} changes)' if len(self.changes) else ""} [4]Modify [0]Exit: "))
             except:
+                printf('-' * self.padding, WHITE)
                 continue
 
             if answer == 0:
@@ -139,7 +174,7 @@ class Testcase:
 
 
 class Grader:
-    def __init__(self):
+    def __init__(self, ):
         pass
 
 
