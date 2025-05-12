@@ -1,8 +1,10 @@
 #include <iostream> 
-
+#include <string>
 using namespace std; 
 
 int main() {
-    cout << "hello world2" << endl; 
+    int a = 0;
+    cin >> a;
+    cout << a << endl;
     return 0; 
 }
