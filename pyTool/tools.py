@@ -25,32 +25,34 @@ def _copyright():
 
 
 class Testcase:
-    def __init__(self, lab, ex, tc_no, tc="", answer=""):
+    def __init__(self, lab, ex, tc_no, tc_dir, answer_dir, tc="", answer="", padding=50):
         self.lab = lab
         self.ex = ex
         self.tc_no = tc_no
         self.new_tc_no = tc_no
         self.input = tc
         self.output = answer
-        self.padding = 50
+        self.padding = padding
         self.is_new = False
+        self.tc_dir = tc_dir
+        self.answer_dir = answer_dir
         self.read_testcase()
 
     @property
     def answer_path(self):
-        return f"../Submission/Lab{self.lab}/Answer/ex{self.lab}_{self.ex}_{self.tc_no}.txt"
+        return f"{self.answer_dir}/ex{self.lab}_{self.ex}_{self.tc_no}.txt"
 
     @property
     def tc_path(self):
-        return f"../Submission/Lab{self.lab}/Testcase/ex{self.lab}_{self.ex}_{self.tc_no}.txt"
+        return f"{self.tc_dir}/ex{self.lab}_{self.ex}_{self.tc_no}.txt"
 
     @property
     def new_answer_path(self):
-        return f"../Submission/Lab{self.lab}/Answer/ex{self.lab}_{self.ex}_{self.new_tc_no}.txt"
+        return f"{self.answer_dir}/ex{self.lab}_{self.ex}_{self.new_tc_no}.txt"
 
     @property
     def new_tc_path(self):
-        return f"../Submission/Lab{self.lab}/Testcase/ex{self.lab}_{self.ex}_{self.new_tc_no}.txt"
+        return f"{self.tc_dir}/ex{self.lab}_{self.ex}_{self.new_tc_no}.txt"
 
     def __repr__(self):
         self.preview()
@@ -65,10 +67,6 @@ class Testcase:
         printf(f"{RED}ANSWER{WHITE}  : {answer if answer else 'No Output'}")
 
     def read_testcase(self):
-        if not os.path.isdir('/'.join(self.tc_path.split('/')[:-1])):
-            os.makedirs(self.tc_path)
-        if not os.path.isdir('/'.join(self.answer_path.split('/')[:-1])):
-            os.makedirs(self.answer_path)
         try:
             with open(self.tc_path, "r") as tc:
                 self.input = tc.read()
@@ -97,22 +95,30 @@ class Testcase:
 
 
 class TestcaseManager:
-    def __init__(self, lab: int, ex: int, tc_no: int, start=True):
+    def __init__(self, lab: int, ex: int, tc_dir, answer_dir, start=True, padding: int = 50):
         self.lab = lab
         self.ex = ex
-        self.n = tc_no
+        self.tc_dir = tc_dir
+        self.answer_dir = answer_dir
+        self.n = self.check_tc()
         self.changes = set()
         self.testcases = []
-        self.padding = 50
+        self.padding = padding
         self.read_testcases()
         if start:
             self.program()
+
+    def check_tc(self):
+        tcs = len(subprocess.run(
+            f"ls {self.tc_dir}/ex{self.lab}_{self.ex}*.txt", capture_output=True, shell=True, text=True).stdout.split("\n"))
+        return tcs
 
     def read_testcases(self) -> None:
         is_new = []
         printf("Current Testcases".center(self.padding, "="), YELLOW)
         for i in range(1, self.n + 1):
-            new_tc = Testcase(self.lab, self.ex, i)
+            new_tc = Testcase(self.lab, self.ex, i, self.tc_dir,
+                              self.answer_dir, padding=self.padding)
             self.testcases.append(new_tc)
             new_tc.preview()
             if new_tc.is_new:
@@ -224,7 +230,7 @@ class TestcaseManager:
                 answer = int(
                     input(f"[1]Preview [2]Add [3]Save{f'({len(self.changes)} changes)' if len(self.changes) else ""} [4]Modify [5]Delete [0]Exit: "))
             except:
-                printf('-' * self.padding, WHITE)
+                printf('_' * self.padding, WHITE)
                 continue
 
             if answer == 0:
@@ -242,45 +248,40 @@ class TestcaseManager:
                 self.delete()
             elif answer == 6:
                 return
-            printf('-' * self.padding, WHITE)
+            printf('_' * self.padding, WHITE)
 
 
 class Grader:
-    def __init__(self, lab, ex, tc_no, start=True, cpp=True):
+    def __init__(self, lab, ex, submission_dir, tc_dir, answer_dir, score_dir, start=True, cpp=True, padding: int = 50):
         self.lab = lab
         self.ex = ex
-        self.tc_no = tc_no
-        self.padding = 50
+        self.padding = padding
         self.cpp = cpp
+        self.submission_dir = submission_dir
+        self.tc_dir = tc_dir
+        self.answer_dir = answer_dir
+        self.score_dir = score_dir
+        self.tc_no = self.check_tc()
         self.TCManager = TestcaseManager(
-            self.lab, self.ex, self.tc_no, start=False)
-
+            self.lab, self.ex, self.tc_no, self.tc_dir, self.answer_dir, start=False, padding=self.padding)
         printf("AUTOGRADER".center(self.padding, "="), CYAN)
 
     @property
-    def txt_path(self):
-        return f"../Scores/Lab{self.lab}/ex{self.lab}_{self.ex}_score.txt"
-
-    @property
     def csv_path(self):
-        return f"../Scores/Lab{self.lab}/ex{self.lab}_{self.ex}_score.csv"
+        return f"{self.score_dir}/ex{self.lab}_{self.ex}_score.csv"
 
-    @property
-    def submission_dir(self):
-        return f"../Submission/Lab{self.lab}/"
+    def check_tc(self):
+        tcs = len(subprocess.run(
+            f"ls {self.tc_dir}/ex{self.lab}_{self.ex}*.txt", capture_output=True, shell=True, text=True).stdout.split("\n"))
 
-    @property
-    def score_dir(self):
-        return f"../Scores/Lab{self.lab}/"
+        return tcs
 
     def grade(self, recompile=True, save=True):
         if not os.path.isdir(self.score_dir):
             os.makedirs(self.score_dir)
+
         ext = ".cpp" if self.cpp else ".c"
         compiler = "g++" if self.cpp else "gcc"
-        with open(self.txt_path, "w") as test:
-            test.write("test")
-
         scores = []
         testcases = []
         for tc in self.TCManager.testcases:
@@ -292,12 +293,12 @@ class Grader:
             printf(f"GRADING ON SESSION : {lab_dir}".center(
                 self.padding, "="), MAGENTA)
 
-            for student_id in os.listdir(self.submission_dir + lab_dir):
-                result = [student_id]
+            for student_id in os.listdir(f"{self.submission_dir}/{lab_dir}"):
+                result = [lab_dir, student_id]
                 printf(f"Checking {CYAN}{student_id}{WHITE}")
 
-                student_path = self.submission_dir + lab_dir + "/" + student_id + "/"
-                compile_path = student_path + f"ex{self.lab}_{self.ex}"
+                student_path = f"{self.submission_dir}/{lab_dir}/{student_id}"
+                compile_path = f"{student_path}/ex{self.lab}_{self.ex}"
 
                 if recompile or not os.path.isfile(compile_path):
                     # Check Submission (cpp file)
@@ -342,7 +343,7 @@ class Grader:
 
     def to_csv(self, data):
         data = pd.DataFrame(data)
-        columns = ["Student ID"]
+        columns = ["Session #", "Student ID"]
         for i in range(1, self.tc_no + 1):
             columns += [f'TC{self.ex}_{i}', f'ANS{self.ex}_{i}']
         data.columns = columns
@@ -355,64 +356,129 @@ class Grader:
         pass
 
 
-class ScoreModule:
-    def __init__(self):
-        try:
-            self.lab = int(input("Lab #: "))
-        except:
-            return
+class Summarizer:
+    def __init__(self, lab, score_dir, padding=50):
+        self.lab = lab
+        self.padding = padding
+        self.score_dir = score_dir
 
+    def read_data(self):
+        scores = pd.DataFrame(columns=['Session #', 'Student ID'])
+
+        if not os.path.isdir(self.path):
+            printf("Directory Does Not Exist. Please Grade Scores First.", RED)
+
+        printf("Reading Score Data", CYAN)
+        for ex in subprocess.run(f"ls {self.score_dir}/ex{self.lab}_*_score.csv", shell=True, capture_output=True, text=True).stdout.split('\n'):
+            if ex == "":
+                continue
+            scores = pd.merge(scores, pd.read_csv(ex), on=[
+                'Session #', 'Student ID'], how='outer')
+
+        scores.to_csv(f"{self.score_dir}/Lab{self.lab}.csv", index=False)
+        printf(
+            f"Successfully Exported Summary [{self.score_dir}/Lab{self.lab}.csv]", GREEN)
+
+        return scores
+
+
+class ScoreModule:
+    def __init__(self, lab, padding=50):
+        self.lab = lab
+        self.padding = padding
+
+        self.check_dir()
+        self.ex = self.check_ex()
+
+    @property
+    def submission_dir(self):
+        return f"../Submission/Lab{self.lab}"
+
+    @property
+    def answer_dir(self):
+        return f"{self.submission_dir}/Answer"
+
+    @property
+    def tc_dir(self):
+        return f"{self.submission_dir}/Testcase"
+
+    @property
+    def score_dir(self):
+        return f"../Scores/Lab{self.lab}"
+
+    def check_dir(self):
+        if not os.path.isdir(self.answer_dir):
+            os.makedirs(self.answer_dir)
+
+        if not os.path.isdir(self.tc_dir):
+            os.makedirs(self.tc_dir)
+
+        if not os.path.isdir(self.score_dir):
+            os.makedirs(self.score_dir)
+
+    def check_ex(self):
         try:
-            self.ex_no = int(input("Total # of EXs: "))
-        except:
-            return
-        self.padding = 50
+            tcs = len(
+                set(map(lambda x: x.split("_")[1], os.listdir(self.tc_dir))))
+            answers = len(
+                set(map(lambda x: x.split("_")[1], os.listdir(self.answer_dir))))
+        except IndexError:
+            printf(f"Name of TC and Answer Files should be form of {RED}ex#_#")
+
+        ex = min(tcs, answers)
+
+        if tcs != answers:
+            printf(
+                f"Assuming {ex} Exercises (Given {tcs} from TC / {answers} from ANS)")
+
+        return ex
 
     def program(self):
         _copyright()
+        printf(
+            f"Grading On: {BLUE}LAB{self.lab}{WHITE}[{BLUE}{self.ex} {WHITE}Exercises]")
         while True:
             try:
                 answer = int(input(
                     "[1]Testcase Manager [2]EX Grader [3]Lab Score Summarizer [4]Exit: "))
             except:
-                printf('-' * self.padding)
+                printf('_' * self.padding)
                 continue
 
             if answer == 1:
                 try:
                     ex = int(input("Ex # To Manage: "))
-                except:
-                    printf('-' * self.padding)
-                    continue
-                try:
                     tc_no = int(input("# of Testcases: "))
                 except:
-                    printf('-' * self.padding)
+                    printf('_' * self.padding)
                     continue
-                manager = TestcaseManager(self.lab, ex, tc_no)
+
+                ex = min(ex, self.ex + 1)
+                manager = TestcaseManager(
+                    self.lab, ex, tc_no, padding=self.padding)
             elif answer == 2:
                 try:
-                    ex = int(input("Ex # To Grade: "))
+                    ex = int(input(f"Ex # To Grade [{self.ex} EX]: "))
+                    if ex > self.ex or ex < 1:
+                        printf(
+                            f"Enter Ex # between 1 and {self.ex}" if self.ex else f"Add Exercises First", RED)
+                        printf('_' * self.padding)
+                        continue
                 except:
-                    printf('-' * self.padding)
+                    printf('_' * self.padding)
                     continue
-                try:
-                    tc_no = int(input("# of Testcases: "))
-                except:
-                    printf('-' * self.padding)
-                    continue
-                grader = Grader(self.lab, ex, tc_no)
+                grader = Grader(self.lab, ex, self.submission_dir, self.tc_dir, self.answer_dir,
+                                self.score_dir, padding=self.padding)
                 grader.grade()
 
             elif answer == 3:
-                pass
-
+                summary = Summarizer(self.lab, self.score_dir, self.padding)
+                summary.read_data()
             elif answer == 4 or answer == 0:
                 return
 
-            printf('-' * self.padding, WHITE)
+            printf('_' * self.padding)
 
 
-module = ScoreModule()
-
+module = ScoreModule(1, 60)
 module.program()
