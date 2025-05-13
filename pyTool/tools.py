@@ -104,7 +104,6 @@ class TestcaseManager:
         self.changes = set()
         self.testcases = []
         self.padding = 50
-        _copyright()
         self.read_testcases()
         if start:
             self.program()
@@ -199,6 +198,9 @@ class TestcaseManager:
             printf(f"Enter number between 1 - {self.n}", MAGENTA)
             return
 
+        if tc_no < 1 or tc_no > self.n:
+            printf(f"Enter number between 1 - {self.n}", MAGENTA)
+            return
         tc = self.testcases[tc_no - 1]
 
         tc.preview()
@@ -216,6 +218,7 @@ class TestcaseManager:
             printf("Successfully Deleted!", GREEN)
 
     def program(self):
+        printf("TESTCASE MANAGER".center(self.padding, "="), CYAN)
         while True:
             try:
                 answer = int(
@@ -243,20 +246,16 @@ class TestcaseManager:
 
 
 class Grader:
-    def __init__(self, lab, ex, tc_no, verbose=True, recompile=True, start=True, cpp=True):
+    def __init__(self, lab, ex, tc_no, start=True, cpp=True):
         self.lab = lab
         self.ex = ex
         self.tc_no = tc_no
-        self.verbose = verbose
-        self.recompile = recompile
         self.padding = 50
         self.cpp = cpp
         self.TCManager = TestcaseManager(
             self.lab, self.ex, self.tc_no, start=False)
 
-        self.grade()
-        if start:
-            self.program()
+        printf("AUTOGRADER".center(self.padding, "="), CYAN)
 
     @property
     def txt_path(self):
@@ -274,7 +273,7 @@ class Grader:
     def score_dir(self):
         return f"../Scores/Lab{self.lab}/"
 
-    def grade(self):
+    def grade(self, recompile=True, save=True):
         if not os.path.isdir(self.score_dir):
             os.makedirs(self.score_dir)
         ext = ".cpp" if self.cpp else ".c"
@@ -282,6 +281,7 @@ class Grader:
         with open(self.txt_path, "w") as test:
             test.write("test")
 
+        scores = []
         testcases = []
         for tc in self.TCManager.testcases:
             testcases.append((tc.input, tc.output))
@@ -289,7 +289,8 @@ class Grader:
         for lab_dir in os.listdir(self.submission_dir):
             if lab_dir == "Answer" or lab_dir == "Testcase":
                 continue
-            printf(f"Grading on Session : {lab_dir}", MAGENTA)
+            printf(f"GRADING ON SESSION : {lab_dir}".center(
+                self.padding, "="), MAGENTA)
 
             for student_id in os.listdir(self.submission_dir + lab_dir):
                 result = [student_id]
@@ -298,13 +299,13 @@ class Grader:
                 student_path = self.submission_dir + lab_dir + "/" + student_id + "/"
                 compile_path = student_path + f"ex{self.lab}_{self.ex}"
 
-                if self.recompile or not os.path.isfile(compile_path):
+                if recompile or not os.path.isfile(compile_path):
                     # Check Submission (cpp file)
-
                     if not os.path.isfile(compile_path + ext):
                         printf(
                             f"    NO SUBMISSION for ex{self.lab}_{self.ex}", RED)
                         result += ['X', 'No Submission'] * self.tc_no
+                        scores.append(result)
                         continue
 
                     # Compile
@@ -314,6 +315,7 @@ class Grader:
                     except:
                         printf("    COMPILE ERROR", RED)
                         result += ['X', 'No Submission'] * self.tc_no
+                        scores.append(result)
                         continue
 
                 for tc, ans in testcases:
@@ -331,15 +333,86 @@ class Grader:
                         printf(
                             f"    {RED}RESULT: {output.stdout.strip()} {WHITE}<-> EXPECTED: {ans.strip()}")
                         result += ['X', output.stdout.strip()]
+                scores.append(result)
+        printf("GRADING COMPLETED".center(self.padding, "="), CYAN)
 
-    def program(self):
+        if save:
+            self.to_csv(scores)
+        return scores
+
+    def to_csv(self, data):
+        data = pd.DataFrame(data)
+        columns = ["Student ID"]
+        for i in range(1, self.tc_no + 1):
+            columns += [f'TC{self.ex}_{i}', f'ANS{self.ex}_{i}']
+        data.columns = columns
+
+        data.to_csv(self.csv_path, index=False)
+        printf(f"EXPORTED CSV FILE [{self.csv_path}]")
         return
 
-
-class Summerizer:
-    def __init__(self):
+    def grade_opts(self):
         pass
 
 
-testcase = TestcaseManager(1, 1, 2)
-grader = Grader(1, 1, 2)
+class ScoreModule:
+    def __init__(self):
+        try:
+            self.lab = int(input("Lab #: "))
+        except:
+            return
+
+        try:
+            self.ex_no = int(input("Total # of EXs: "))
+        except:
+            return
+        self.padding = 50
+
+    def program(self):
+        _copyright()
+        while True:
+            try:
+                answer = int(input(
+                    "[1]Testcase Manager [2]EX Grader [3]Lab Score Summarizer [4]Exit: "))
+            except:
+                printf('-' * self.padding)
+                continue
+
+            if answer == 1:
+                try:
+                    ex = int(input("Ex # To Manage: "))
+                except:
+                    printf('-' * self.padding)
+                    continue
+                try:
+                    tc_no = int(input("# of Testcases: "))
+                except:
+                    printf('-' * self.padding)
+                    continue
+                manager = TestcaseManager(self.lab, ex, tc_no)
+            elif answer == 2:
+                try:
+                    ex = int(input("Ex # To Grade: "))
+                except:
+                    printf('-' * self.padding)
+                    continue
+                try:
+                    tc_no = int(input("# of Testcases: "))
+                except:
+                    printf('-' * self.padding)
+                    continue
+                grader = Grader(self.lab, ex, tc_no)
+                grader.grade()
+
+            elif answer == 3:
+                pass
+
+            elif answer == 4 or answer == 0:
+                return
+
+            printf('-' * self.padding, WHITE)
+
+
+module = ScoreModule()
+
+module.program()
