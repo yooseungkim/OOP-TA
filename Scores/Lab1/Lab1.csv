@@ -1,13 +1,13 @@
-Session #,Student ID,TC1_1,ANS1_1,TC2_1,ANS2_1,TC2_2,ANS2_2,TC2_3,ANS2_3,TC3_1,ANS3_1,TC3_2,ANS3_2,TC3_3,ANS3_3
-Lab1,s20215047,X,No Submission,X,0,X,0,X,0,X,hello world3,X,hello world3,X,hello world3
-Lab1,s20215048,O,1,X,hello world2,X,hello world2,X,hello world2,X,hello world3,X,hello world3,X,hello world3
-Lab1,s20215049,X,hello world1,X,hello world2,X,hello world2,X,hello world2,X,hello world3,X,hello world3,X,hello world3
-Lab2,s20215047,X,hello world1,X,hello world2,X,hello world2,X,hello world2,X,hello world3,X,hello world3,X,hello world3
-Lab2,s20215048,X,hello world1,X,hello world2,X,hello world2,X,hello world2,X,hello world3,X,hello world3,X,hello world3
-Lab2,s20215049,X,hello world1,X,hello world2,X,hello world2,X,hello world2,X,hello world3,X,hello world3,X,hello world3
-Lab3,s20215047,X,hello world1,X,hello world2,X,hello world2,X,hello world2,X,hello world3,X,hello world3,X,hello world3
-Lab3,s20215048,X,hello world1,X,hello world2,X,hello world2,X,hello world2,X,hello world3,X,hello world3,X,hello world3
-Lab3,s20215049,X,hello world1,X,hello world2,X,hello world2,X,hello world2,X,hello world3,X,hello world3,X,hello world3
-Lab4,s20215047,X,hello world1,X,hello world2,X,hello world2,X,hello world2,X,hello world3,X,hello world3,X,hello world3
-Lab4,s20215048,X,hello world1,X,hello world2,X,hello world2,X,hello world2,X,hello world3,X,hello world3,X,hello world3
-Lab4,s20215049,X,hello world1,X,hello world2,X,hello world2,X,hello world2,X,hello world3,X,hello world3,X,hello world3
+Session #,Student ID,TC1_1,ANS1_1,TC1_2,ANS1_2,TC2_1,ANS2_1,TC3_1,ANS3_1,TC3_2,ANS3_2,TC3_3,ANS3_3,TC6_1,ANS6_1,TC6_2,ANS6_2,TC6_3,ANS6_3,TC6_4,ANS6_4
+Lab1,s20215047,X,No Submission,X,No Submission,X,0,X,hello world3,X,hello world3,X,hello world3,X,No Submission,X,No Submission,X,No Submission,X,No Submission
+Lab1,s20215048,O,,O,,X,hello world2,X,hello world3,X,hello world3,X,hello world3,X,No Submission,X,No Submission,X,No Submission,X,No Submission
+Lab1,s20215049,X,hello world1,X,hello world1,X,hello world2,X,hello world3,X,hello world3,X,hello world3,X,No Submission,X,No Submission,X,No Submission,X,No Submission
+Lab2,s20215047,X,hello world1,X,hello world1,X,hello world2,X,hello world3,X,hello world3,X,hello world3,X,No Submission,X,No Submission,X,No Submission,X,No Submission
+Lab2,s20215048,X,hello world1,X,hello world1,X,hello world2,X,hello world3,X,hello world3,X,hello world3,X,No Submission,X,No Submission,X,No Submission,X,No Submission
+Lab2,s20215049,X,hello world1,X,hello world1,X,hello world2,X,hello world3,X,hello world3,X,hello world3,X,No Submission,X,No Submission,X,No Submission,X,No Submission
+Lab3,s20215047,X,hello world1,X,hello world1,X,hello world2,X,hello world3,X,hello world3,X,hello world3,X,No Submission,X,No Submission,X,No Submission,X,No Submission
+Lab3,s20215048,X,hello world1,X,hello world1,X,hello world2,X,hello world3,X,hello world3,X,hello world3,X,No Submission,X,No Submission,X,No Submission,X,No Submission
+Lab3,s20215049,X,hello world1,X,hello world1,X,hello world2,X,hello world3,X,hello world3,X,hello world3,X,No Submission,X,No Submission,X,No Submission,X,No Submission
+Lab4,s20215047,X,hello world1,X,hello world1,X,hello world2,X,hello world3,X,hello world3,X,hello world3,X,No Submission,X,No Submission,X,No Submission,X,No Submission
+Lab4,s20215048,X,hello world1,X,hello world1,X,hello world2,X,hello world3,X,hello world3,X,hello world3,X,No Submission,X,No Submission,X,No Submission,X,No Submission
+Lab4,s20215049,X,hello world1,X,hello world1,X,hello world2,X,hello world3,X,hello world3,X,hello world3,X,No Submission,X,No Submission,X,No Submission,X,No Submission

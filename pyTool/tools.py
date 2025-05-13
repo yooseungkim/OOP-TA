@@ -109,47 +109,50 @@ class TestcaseManager:
             self.program()
 
     def check_tc(self):
-        tcs = len(subprocess.run(
-            f"ls {self.tc_dir}/ex{self.lab}_{self.ex}*.txt", capture_output=True, shell=True, text=True).stdout.split("\n"))
-        return tcs
+        output = list(
+            filter(lambda x: f"ex{self.lab}_{self.ex}_" in x, os.listdir(self.tc_dir)))
+        return len(output)
 
     def read_testcases(self) -> None:
-        is_new = []
+        if self.n == 0:
+            printf("Created New Exercise", YELLOW)
+            try:
+                self.n = int(input("Enter # of TC to Create: "))
+                assert self.n > 0
+            except AssertionError:
+                printf("Invalid Number Given, Creating 3 TC as Default", YELLOW)
+                self.n = 3
+
+            for i in range(1, self.n + 1):
+                tc = input(
+                    f"[EX{self.ex}-{i}]Enter Testcase Input: ").strip()
+                answer = input(
+                    f"[EX{self.ex}-{i}]Enter Testcase Answer: ").strip()
+
+                new_tc = Testcase(self.lab, self.ex, i, self.tc_dir,
+                                  self.answer_dir, tc=tc, answer=answer, padding=self.padding)
+                self.testcases.append(new_tc)
+
+            printf("=" * self.padding, YELLOW)
+            return
+
         printf("Current Testcases".center(self.padding, "="), YELLOW)
         for i in range(1, self.n + 1):
             new_tc = Testcase(self.lab, self.ex, i, self.tc_dir,
                               self.answer_dir, padding=self.padding)
             self.testcases.append(new_tc)
             new_tc.preview()
-            if new_tc.is_new:
-                is_new.append(i)
+
         printf(f"Complete Reading {len(self.testcases)} Testcases".center(
             self.padding, "="), YELLOW)
-
-        if is_new:
-            printf(
-                "Some Testcases are Newly Created. Would You Like to Modify Them?[Y,y/N]")
-
-            if input().capitalize() == "Y":
-                for i in is_new:
-                    modified_tc = self.testcases[i - 1]
-                    tc = input(
-                        f"[EX{self.ex}-{i}]Enter Testcase Input: ").strip()
-                    answer = input(
-                        f"[EX{self.ex}-{i}]Enter Testcase Answer: ").strip()
-
-                    modified_tc.input = tc
-                    modified_tc.output = answer
-                    modified_tc.save()
-
-                printf("=" * self.padding, YELLOW)
 
     def append_testcase(self) -> None:
         tc = input("Enter Testcase Input: ").strip()
         answer = input("Enter Testcase Answer: ").strip()
 
         self.n += 1
-        new_tc = Testcase(self.lab, self.ex, self.n, tc, answer)
+        new_tc = Testcase(self.lab, self.ex, self.n, self.tc_dir,
+                          self.answer_dir, tc, answer,  self.padding)
         self.testcases.append(new_tc)
         self.changes.add(self.n)
 
@@ -263,7 +266,7 @@ class Grader:
         self.score_dir = score_dir
         self.tc_no = self.check_tc()
         self.TCManager = TestcaseManager(
-            self.lab, self.ex, self.tc_no, self.tc_dir, self.answer_dir, start=False, padding=self.padding)
+            self.lab, self.ex, self.tc_dir, self.answer_dir, start=False, padding=self.padding)
         printf("AUTOGRADER".center(self.padding, "="), CYAN)
 
     @property
@@ -363,11 +366,11 @@ class Summarizer:
         self.score_dir = score_dir
 
     def read_data(self):
-        scores = pd.DataFrame(columns=['Session #', 'Student ID'])
 
-        if not os.path.isdir(self.path):
+        if not os.path.isdir(self.score_dir):
             printf("Directory Does Not Exist. Please Grade Scores First.", RED)
 
+        scores = pd.DataFrame(columns=['Session #', 'Student ID'])
         printf("Reading Score Data", CYAN)
         for ex in subprocess.run(f"ls {self.score_dir}/ex{self.lab}_*_score.csv", shell=True, capture_output=True, text=True).stdout.split('\n'):
             if ex == "":
@@ -447,15 +450,14 @@ class ScoreModule:
 
             if answer == 1:
                 try:
-                    ex = int(input("Ex # To Manage: "))
-                    tc_no = int(input("# of Testcases: "))
+                    ex = int(input(f"Ex # To Grade [{self.ex} EX]: "))
                 except:
                     printf('_' * self.padding)
                     continue
 
                 ex = min(ex, self.ex + 1)
                 manager = TestcaseManager(
-                    self.lab, ex, tc_no, padding=self.padding)
+                    self.lab, ex, self.tc_dir, self.answer_dir, padding=self.padding)
             elif answer == 2:
                 try:
                     ex = int(input(f"Ex # To Grade [{self.ex} EX]: "))
