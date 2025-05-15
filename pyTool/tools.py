@@ -444,19 +444,25 @@ class Summarizer:
 
     def export_data(self):
         if not os.path.isdir(self.score_dir):
-            printf("Directory Does Not Exist. Please Grade Scores First.", RED)
+            printf("Directory Does Not Exist. Please Grade Scores First.",
+                   self.error_color)
 
         scores = pd.DataFrame(
             columns=['Session #', 'Student ID', 'Total Points'])
         printf("Reading Score Data", CYAN)
         suffix = 1
-        for ex in subprocess.run(f"ls {self.score_dir}/ex{self.lab}_*_score.csv", shell=True, capture_output=True, text=True).stdout.split('\n'):
+        files = subprocess.run(f"ls {self.score_dir}/ex{self.lab}_*_score.csv",
+                               shell=True, capture_output=True, text=True).stdout.split('\n')
+        for ex in files:
             if ex == "":
                 continue
             scores = pd.merge(scores, pd.read_csv(ex)[['Session #', 'Student ID', f'Points{suffix}']], on=[
                 'Session #', 'Student ID'], how='outer')
             suffix += 1
 
+        if suffix == 1:
+            printf("No Data Found, Please Grade First", self.warning_color)
+            return pd.DataFrame()
         scores['Total Points'] = sum(
             scores[f'Points{i}'] for i in range(1, suffix))
         scores.to_csv(f"{self.score_dir}/Lab{self.lab}.csv", index=False)
@@ -557,11 +563,14 @@ class ScoreModule:
                 manager = TestcaseManager(
                     self.lab, ex, self.tc_dir, self.answer_dir, padding=self.padding, main_color=self.main_color, alt_color=self.tc_color)
             elif answer == 2:
+                if self.ex == 0:
+                    printf(f"Add Exercises First", self.error_color)
+                    continue
                 try:
                     ex = int(input(f"Ex # To Grade [{self.ex} EX]: "))
                     if ex > self.ex or ex < 1:
                         printf(
-                            f"Enter Ex # between 1 and {self.ex}" if self.ex else f"Add Exercises First", self.error_color)
+                            f"Enter Ex # between 1 and {self.ex}", self.error_color)
                         printf('_' * self.padding)
                         continue
                 except:
