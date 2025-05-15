@@ -242,7 +242,7 @@ class TestcaseManager:
         while True:
             try:
                 answer = int(
-                    input(f"[1]Preview [2]Add [3]Save{f'({len(self.changes)} changes)' if len(self.changes) else ""} [4]Modify [5]Delete [0]Exit: "))
+                    input(f"[1]Preview [2]Add [3]Save{f'({len(self.changes)} changes)' if len(self.changes) else ""} [4]Modify [5]Delete [6/0]Exit: "))
             except:
                 printf('_' * self.padding, WHITE)
                 continue
@@ -266,7 +266,7 @@ class TestcaseManager:
 
 
 class Grader:
-    def __init__(self, lab, ex, submission_dir, tc_dir, answer_dir, score_dir, start=True, cpp=True, padding: int = 50, main_color=BLUE, alt_color=CYAN, good_color=GREEN, error_color=RED, warning_color=MAGENTA):
+    def __init__(self, lab, ex, submission_dir, tc_dir, answer_dir, score_dir, padding: int = 50, main_color=BLUE, alt_color=CYAN, good_color=GREEN, error_color=RED, warning_color=MAGENTA, recompile=False, cpp=True):
         self.lab = lab
         self.ex = ex
         self.padding = padding
@@ -283,7 +283,7 @@ class Grader:
         self.error_color = error_color
         self.warning_color = warning_color
         self.points = 10
-        self.recompile = True
+        self.recompile = recompile
         self.TCManager = TestcaseManager(
             self.lab, self.ex, self.tc_dir, self.answer_dir, start=False, padding=self.padding)
         printf("AUTOGRADER".center(self.padding, "="), self.main_color)
@@ -293,20 +293,20 @@ class Grader:
         return f"{self.score_dir}/ex{self.lab}_{self.ex}_score.csv"
 
     def check_tc(self):
-        tcs = len(subprocess.run(
-            f"ls {self.tc_dir}/ex{self.lab}_{self.ex}*.txt", capture_output=True, shell=True, text=True).stdout.split("\n"))
-
-        return tcs
+        output = list(
+            filter(lambda x: f"ex{self.lab}_{self.ex}_" in x, os.listdir(self.tc_dir)))
+        return len(output)
 
     def grade(self, save=True):
         if not os.path.isdir(self.score_dir):
             os.makedirs(self.score_dir)
 
         self.show_grade_ops()
-
         while input("Confirm Grading Options?[Y,y/N]: ").strip().capitalize() != "Y":
             self.set_grade_opts()
+            self.show_grade_ops()
 
+        printf(f"Now Grading Lab{self.lab} Ex{self.ex}", self.main_color)
         ext = ".cpp" if self.cpp else ".c"
         compiler = "g++" if self.cpp else "gcc"
         scores = []
@@ -332,7 +332,7 @@ class Grader:
                     if not os.path.isfile(compile_path + ext):
                         printf(
                             f"    NO SUBMISSION for ex{self.lab}_{self.ex}", self.error_color)
-                        result += ['X', 'No Submission'] * self.tc_no
+                        result += ['X', 'No Submission'] * self.tc_no + [0]
                         scores.append(result)
                         continue
 
@@ -342,10 +342,11 @@ class Grader:
                             f"{compiler} {compile_path}*{ext} -o {compile_path}", shell=True, capture_output=True, check=True, text=True)
                     except:
                         printf("    COMPILE ERROR", self.error_color)
-                        result += ['X', 'No Submission'] * self.tc_no
+                        result += ['X', 'No Submission'] * self.tc_no + [0]
                         scores.append(result)
                         continue
 
+                correct = True
                 for tc, ans in testcases:
                     output = subprocess.run(
                         [f'{compile_path}'], input=tc, capture_output=True, shell=True, text=True)
@@ -360,8 +361,10 @@ class Grader:
                         result += ['O', output.stdout.strip()]
                     else:
                         printf(
-                            f"    {self.error_color}RESULT: {output.stdout.strip()} {WHITE}<-> EXPECTED: {ans.strip()}")
+                            f"    {self.error_color}RESULT: {output.stdout.strip() if output.stdout else 'ø'} {WHITE}<-> EXPECTED: {ans.strip() if ans else 'ø'}")
                         result += ['X', output.stdout.strip()]
+                        correct = False
+                result += [self.points if correct else 0]
                 scores.append(result)
         printf("GRADING COMPLETED".center(self.padding, "="), self.main_color)
 
@@ -379,6 +382,7 @@ class Grader:
         columns = ["Session #", "Student ID"]
         for i in range(1, self.tc_no + 1):
             columns += [f'TC{self.ex}_{i}', f'ANS{self.ex}_{i}']
+        columns += [f'Points{self.ex}']
         data.columns = columns
 
         data.to_csv(self.csv_path, index=False)
@@ -389,7 +393,6 @@ class Grader:
         printf(f"Points: {self.main_color}{self.points}{WHITE}, Compiler: {self.alt_color}{"g++" if self.cpp else "gcc"}{WHITE}, Recompile: {self.alt_color}{self.recompile}")
 
     def set_grade_opts(self):
-
         printf(
             f"Enter options separated by comma, e.g. {self.main_color}'points=#, compiler=gcc, recompile=false'")
         try:
@@ -410,7 +413,6 @@ class Grader:
             if len(answer) == 0:
                 return
             printf("Invalid Input", self.error_color)
-
         return
 
 
@@ -425,41 +427,49 @@ class Summarizer:
         self.error_color = error_color
         self.warning_color = warning_color
 
-    def read_data(self):
-
+    def export_data(self):
         if not os.path.isdir(self.score_dir):
             printf("Directory Does Not Exist. Please Grade Scores First.", RED)
 
-        scores = pd.DataFrame(columns=['Session #', 'Student ID'])
+        scores = pd.DataFrame(columns=['Session #', 'Student ID', 'Points'])
         printf("Reading Score Data", CYAN)
+        suffix = 1
         for ex in subprocess.run(f"ls {self.score_dir}/ex{self.lab}_*_score.csv", shell=True, capture_output=True, text=True).stdout.split('\n'):
             if ex == "":
                 continue
-            scores = pd.merge(scores, pd.read_csv(ex), on=[
+            scores = pd.merge(scores, pd.read_csv(ex)[['Session #', 'Student ID', f'Points{suffix}']], on=[
                 'Session #', 'Student ID'], how='outer')
+            suffix += 1
 
+        scores['Points'] = sum(scores[f'Points{i}'] for i in range(1, suffix))
         scores.to_csv(f"{self.score_dir}/Lab{self.lab}.csv", index=False)
         printf(
             f"Successfully Exported Summary [{self.score_dir}/Lab{self.lab}.csv]", GREEN)
 
+        self.review_data(scores)
         return scores
+
+    def review_data(self, data):
+        print(data.groupby('Session #').describe())
 
 
 class ScoreModule:
-    def __init__(self, lab, main_color=BLUE, good_color=GREEN, error_color=RED, warning_color=MAGENTA, padding=50):
+    def __init__(self, lab, main_color=BLUE, good_color=GREEN, error_color=RED, warning_color=MAGENTA, padding=60, cpp=True, recompile=False):
         self.lab = lab
         self.padding = int(padding)
         self.main_color = main_color
         self.good_color = good_color
         self.error_color = error_color
         self.warning_color = warning_color
-
+        self.cwd = os.getcwd()
         self.check_dir()
         self.ex = self.check_ex()
+        self.cpp = cpp
+        self.recompile = recompile
 
     @property
     def submission_dir(self):
-        return f"../Submission/Lab{self.lab}"
+        return f"{self.cwd}/../Submission/Lab{self.lab}"
 
     @property
     def answer_dir(self):
@@ -471,7 +481,7 @@ class ScoreModule:
 
     @property
     def score_dir(self):
-        return f"../Scores/Lab{self.lab}"
+        return f"{self.cwd}/../Scores/Lab{self.lab}"
 
     def check_dir(self):
         if not os.path.isdir(self.answer_dir):
@@ -508,7 +518,7 @@ class ScoreModule:
         while True:
             try:
                 answer = int(input(
-                    "[1]Testcase Manager [2]EX Grader [3]Lab Score Summarizer [4]Exit: "))
+                    "[1]Testcase Manager [2]EX Grader [3]Lab Score Summarizer [4/0]Exit: "))
             except:
                 printf('_' * self.padding)
                 continue
@@ -537,13 +547,13 @@ class ScoreModule:
                     printf('_' * self.padding)
                     continue
                 grader = Grader(self.lab, ex, self.submission_dir, self.tc_dir, self.answer_dir,
-                                self.score_dir, padding=self.padding, alt_color=CYAN)
+                                self.score_dir, padding=self.padding, alt_color=CYAN, cpp=self.cpp, recompile=self.recompile)
                 grader.grade()
 
             elif answer == 3:
                 summary = Summarizer(
                     self.lab, self.score_dir, self.padding, alt_color=CYAN)
-                summary.read_data()
+                summary.export_data()
             elif answer == 4 or answer == 0:
                 return
 
@@ -557,6 +567,7 @@ def main(lab, **kwargs):
 
 if __name__ == "__main__":
     lab = sys.argv[1]
+    # kwargs for ScoreModule: padding, main_color, alt_color, warning_color, error_color
     kwargs = dict(arg.split("=") for arg in sys.argv[2:])
 
     main(lab, **kwargs)

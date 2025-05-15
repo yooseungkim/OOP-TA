@@ -1,13 +1,13 @@
-Session #,Student ID,TC2_1,ANS2_1
-Lab1,s20215049,X,hello world2
-Lab1,s20215047,X,0
-Lab1,s20215048,X,hello world2
-Lab2,s20215049,X,hello world2
-Lab2,s20215047,X,hello world2
-Lab2,s20215048,X,hello world2
-Lab3,s20215049,X,hello world2
-Lab3,s20215047,X,hello world2
-Lab3,s20215048,X,hello world2
-Lab4,s20215049,X,hello world2
-Lab4,s20215047,X,hello world2
-Lab4,s20215048,X,hello world2
+Session #,Student ID,TC2_1,ANS2_1,TC2_2,ANS2_2,Points2
+Lab1,s20215049,X,hello world2,X,hello world2,0
+Lab1,s20215047,X,0,X,0,0
+Lab1,s20215048,X,hello world2,X,hello world2,0
+Lab2,s20215049,X,hello world2,X,hello world2,0
+Lab2,s20215047,X,hello world2,X,hello world2,0
+Lab2,s20215048,X,hello world2,X,hello world2,0
+Lab3,s20215049,X,hello world2,X,hello world2,0
+Lab3,s20215047,X,hello world2,X,hello world2,0
+Lab3,s20215048,X,hello world2,X,hello world2,0
+Lab4,s20215049,X,hello world2,X,hello world2,0
+Lab4,s20215047,X,hello world2,X,hello world2,0
+Lab4,s20215048,X,hello world2,X,hello world2,0
