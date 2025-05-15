@@ -1,8 +1,17 @@
-#include <iostream> 
-
-using namespace std; 
+#include <iostream>
 
 int main() {
-    cout << "hello world1" << endl; 
-    return 0; 
+    int num1, num2, sum;
+
+    std::cout << "Enter first number: ";
+    std::cin >> num1;
+
+    std::cout << "Enter second number: ";
+    std::cin >> num2;
+
+    sum = num1 + num2;
+
+    std::cout << "The sum is: " << sum << std::endl;
+
+    return 0;
 }
