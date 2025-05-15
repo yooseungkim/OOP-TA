@@ -7,7 +7,7 @@ try:
     exs = int(sys.argv[2])
 except IndexError:
     exs = 3
-    
+
 directory = f"../Scores/Lab{labs}/"
 
 dfs = []

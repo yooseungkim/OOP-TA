@@ -25,7 +25,7 @@ def _copyright():
 
 
 class Testcase:
-    def __init__(self, lab, ex, tc_no, tc_dir, answer_dir, tc="", answer="", padding=50):
+    def __init__(self, lab, ex, tc_no, tc_dir, answer_dir, tc="", answer="", padding=50, main_color=BLUE, alt_color=YELLOW, error_color=RED, warning_color=MAGENTA):
         self.lab = lab
         self.ex = ex
         self.tc_no = tc_no
@@ -36,6 +36,10 @@ class Testcase:
         self.is_new = False
         self.tc_dir = tc_dir
         self.answer_dir = answer_dir
+        self.main_color = main_color
+        self.alt_color = alt_color
+        self.error_color = error_color
+        self.warning_color = warning_color
         self.read_testcase()
 
     @property
@@ -63,8 +67,9 @@ class Testcase:
         answer = '\n' + self.output if '\n' in self.output else self.output
         printf(
             f"LAB{self.lab} EX{self.ex}-{self.tc_no}".center(self.padding, "-"), WHITE)
-        printf(f"{CYAN}TESTCASE{WHITE}: {tc if tc else 'No Input'}")
-        printf(f"{RED}ANSWER{WHITE}  : {answer if answer else 'No Output'}")
+        printf(f"{self.main_color}TESTCASE{WHITE}: {tc if tc else 'No Input'}")
+        printf(
+            f"{self.alt_color}ANSWER{WHITE}  : {answer if answer else 'No Output'}")
 
     def read_testcase(self):
         try:
@@ -95,7 +100,7 @@ class Testcase:
 
 
 class TestcaseManager:
-    def __init__(self, lab: int, ex: int, tc_dir, answer_dir, start=True, padding: int = 50):
+    def __init__(self, lab: int, ex: int, tc_dir, answer_dir, start=True, padding: int = 50, main_color=BLUE, alt_color=YELLOW, good_color=GREEN, error_color=RED, warning_color=MAGENTA):
         self.lab = lab
         self.ex = ex
         self.tc_dir = tc_dir
@@ -104,6 +109,11 @@ class TestcaseManager:
         self.changes = set()
         self.testcases = []
         self.padding = padding
+        self.main_color = main_color
+        self.alt_color = alt_color
+        self.good_color = good_color
+        self.error_color = error_color
+        self.warning_color = warning_color
         self.read_testcases()
         if start:
             self.program()
@@ -115,12 +125,13 @@ class TestcaseManager:
 
     def read_testcases(self) -> None:
         if self.n == 0:
-            printf("Created New Exercise", YELLOW)
+            printf("Created New Exercise", self.main_color)
             try:
                 self.n = int(input("Enter # of TC to Create: "))
                 assert self.n > 0
             except AssertionError:
-                printf("Invalid Number Given, Creating 3 TC as Default", YELLOW)
+                printf("Invalid Number Given, Creating 3 TC as Default",
+                       self.warning_color)
                 self.n = 3
 
             for i in range(1, self.n + 1):
@@ -133,10 +144,10 @@ class TestcaseManager:
                                   self.answer_dir, tc=tc, answer=answer, padding=self.padding)
                 self.testcases.append(new_tc)
 
-            printf("=" * self.padding, YELLOW)
+            printf("=" * self.padding, self.main_color)
             return
 
-        printf("Current Testcases".center(self.padding, "="), YELLOW)
+        printf("Current Testcases".center(self.padding, "="), self.alt_color)
         for i in range(1, self.n + 1):
             new_tc = Testcase(self.lab, self.ex, i, self.tc_dir,
                               self.answer_dir, padding=self.padding)
@@ -144,7 +155,7 @@ class TestcaseManager:
             new_tc.preview()
 
         printf(f"Complete Reading {len(self.testcases)} Testcases".center(
-            self.padding, "="), YELLOW)
+            self.padding, "="), self.alt_color)
 
     def append_testcase(self) -> None:
         tc = input("Enter Testcase Input: ").strip()
@@ -156,7 +167,7 @@ class TestcaseManager:
         self.testcases.append(new_tc)
         self.changes.add(self.n)
 
-        printf("Successfully Added!", GREEN)
+        printf("Successfully Added!", self.good_color)
 
     def publish(self) -> None:
         if len(self.changes) == 0:
@@ -166,12 +177,12 @@ class TestcaseManager:
         printf(
             f"Changes on Testcase #[{', '.join(map(str, list(self.changes)))}] - Total: {len(self.changes)}")
         printf("Are You Sure to Save Changes?[Y,y/N]", end="")
-        printf("[It cannot be Undone]", RED)
+        printf("[It cannot be Undone]", self.warning_color)
 
         if input().capitalize() == "Y":
             for tc in self.testcases:
                 tc.save()
-            printf("Successfully Saved!", GREEN)
+            printf("Successfully Saved!", self.good_color)
         else:
             printf("To preview changes, press [1]")
 
@@ -182,10 +193,10 @@ class TestcaseManager:
         try:
             tc_no = int(tc_no)
         except:
-            printf(f"Enter number between 1 - {self.n}", MAGENTA)
+            printf(f"Enter number between 1 - {self.n}", self.error_color)
             return
 
-        printf("Current".center(self.padding), YELLOW)
+        printf("Current".center(self.padding, "="), self.alt_color)
         modified_tc = self.testcases[tc_no - 1]
         modified_tc.preview()
         tc = input("Enter Testcase Input: ").strip()
@@ -193,28 +204,28 @@ class TestcaseManager:
 
         modified_tc.input = tc
         modified_tc.output = answer
-        printf("Modified".center(self.padding), YELLOW)
+        printf("Modified".center(self.padding), self.alt_color)
         modified_tc.preview()
 
         self.changes.add(tc_no)
-        printf("Successfully Modified!", GREEN)
+        printf("Successfully Modified!", self.good_color)
 
     def delete(self) -> None:
         tc_no = input("Enter Testcase # to Delete: ")
         try:
             tc_no = int(tc_no)
         except:
-            printf(f"Enter number between 1 - {self.n}", MAGENTA)
+            printf(f"Enter number between 1 - {self.n}", self.error_color)
             return
 
         if tc_no < 1 or tc_no > self.n:
-            printf(f"Enter number between 1 - {self.n}", MAGENTA)
+            printf(f"Enter number between 1 - {self.n}", self.error_color)
             return
         tc = self.testcases[tc_no - 1]
 
         tc.preview()
         printf("Are You Sure to Delete Testcase Above?[Y,y/N]", end="")
-        printf("[It cannot be Undone]", RED)
+        printf("[It cannot be Undone]", self.warning_color)
 
         if input().capitalize() == "Y":
             self.testcases.pop(tc_no - 1)
@@ -224,10 +235,10 @@ class TestcaseManager:
             tc.delete()
 
             self.changes.add("DELETED")
-            printf("Successfully Deleted!", GREEN)
+            printf("Successfully Deleted!", self.good_color)
 
     def program(self):
-        printf("TESTCASE MANAGER".center(self.padding, "="), CYAN)
+        printf("TESTCASE MANAGER".center(self.padding, "="), self.main_color)
         while True:
             try:
                 answer = int(
@@ -255,7 +266,7 @@ class TestcaseManager:
 
 
 class Grader:
-    def __init__(self, lab, ex, submission_dir, tc_dir, answer_dir, score_dir, start=True, cpp=True, padding: int = 50):
+    def __init__(self, lab, ex, submission_dir, tc_dir, answer_dir, score_dir, start=True, cpp=True, padding: int = 50, main_color=BLUE, alt_color=CYAN, good_color=GREEN, error_color=RED, warning_color=MAGENTA):
         self.lab = lab
         self.ex = ex
         self.padding = padding
@@ -265,9 +276,14 @@ class Grader:
         self.answer_dir = answer_dir
         self.score_dir = score_dir
         self.tc_no = self.check_tc()
+        self.main_color = main_color
+        self.alt_color = alt_color
+        self.good_color = good_color
+        self.alt_color = alt_color
+        self.error_color = error_color
         self.TCManager = TestcaseManager(
             self.lab, self.ex, self.tc_dir, self.answer_dir, start=False, padding=self.padding)
-        printf("AUTOGRADER".center(self.padding, "="), CYAN)
+        printf("AUTOGRADER".center(self.padding, "="), self.main_color)
 
     @property
     def csv_path(self):
@@ -294,11 +310,11 @@ class Grader:
             if lab_dir == "Answer" or lab_dir == "Testcase":
                 continue
             printf(f"GRADING ON SESSION : {lab_dir}".center(
-                self.padding, "="), MAGENTA)
+                self.padding, "="), self.main_color)
 
             for student_id in os.listdir(f"{self.submission_dir}/{lab_dir}"):
                 result = [lab_dir, student_id]
-                printf(f"Checking {CYAN}{student_id}{WHITE}")
+                printf(f"Checking {self.alt_color}{student_id}{WHITE}")
 
                 student_path = f"{self.submission_dir}/{lab_dir}/{student_id}"
                 compile_path = f"{student_path}/ex{self.lab}_{self.ex}"
@@ -307,7 +323,7 @@ class Grader:
                     # Check Submission (cpp file)
                     if not os.path.isfile(compile_path + ext):
                         printf(
-                            f"    NO SUBMISSION for ex{self.lab}_{self.ex}", RED)
+                            f"    NO SUBMISSION for ex{self.lab}_{self.ex}", self.error_color)
                         result += ['X', 'No Submission'] * self.tc_no
                         scores.append(result)
                         continue
@@ -317,7 +333,7 @@ class Grader:
                         subprocess.run(
                             f"{compiler} {compile_path}*{ext} -o {compile_path}", shell=True, capture_output=True, check=True, text=True)
                     except:
-                        printf("    COMPILE ERROR", RED)
+                        printf("    COMPILE ERROR", self.error_color)
                         result += ['X', 'No Submission'] * self.tc_no
                         scores.append(result)
                         continue
@@ -327,18 +343,19 @@ class Grader:
                         [f'{compile_path}'], input=tc, capture_output=True, shell=True, text=True)
 
                     if output.stderr != "":
-                        printf(f"    RUNTIME ERROR: {output.stderror}", RED)
+                        printf(
+                            f"    RUNTIME ERROR: {output.stderror}", self.error_color)
                         result += ['X', "Runtime Error"]
 
                     if output.stdout.strip() == ans.strip():
-                        printf("    CORRECT", GREEN)
+                        printf("    CORRECT", self.good_color)
                         result += ['O', output.stdout.strip()]
                     else:
                         printf(
-                            f"    {RED}RESULT: {output.stdout.strip()} {WHITE}<-> EXPECTED: {ans.strip()}")
+                            f"    {self.error_color}RESULT: {output.stdout.strip()} {WHITE}<-> EXPECTED: {ans.strip()}")
                         result += ['X', output.stdout.strip()]
                 scores.append(result)
-        printf("GRADING COMPLETED".center(self.padding, "="), CYAN)
+        printf("GRADING COMPLETED".center(self.padding, "="), self.main_color)
 
         if save:
             self.to_csv(scores)
@@ -352,7 +369,7 @@ class Grader:
         data.columns = columns
 
         data.to_csv(self.csv_path, index=False)
-        printf(f"EXPORTED CSV FILE [{self.csv_path}]")
+        printf(f"EXPORTED CSV FILE [{self.csv_path}]", self.good_color)
         return
 
     def grade_opts(self):
@@ -360,10 +377,15 @@ class Grader:
 
 
 class Summarizer:
-    def __init__(self, lab, score_dir, padding=50):
+    def __init__(self, lab, score_dir, padding=50, main_color=BLUE, alt_color=CYAN, good_color=GREEN, error_color=RED, warning_color=MAGENTA):
         self.lab = lab
         self.padding = padding
         self.score_dir = score_dir
+        self.main_color = main_color
+        self.alt_color = alt_color
+        self.good_color = good_color
+        self.error_color = error_color
+        self.warning_color = warning_color
 
     def read_data(self):
 
@@ -386,9 +408,13 @@ class Summarizer:
 
 
 class ScoreModule:
-    def __init__(self, lab, padding=50):
+    def __init__(self, lab, main_color=BLUE, good_color=GREEN, error_color=RED, warning_color=MAGENTA, padding=50):
         self.lab = lab
-        self.padding = padding
+        self.padding = int(padding)
+        self.main_color = main_color
+        self.good_color = good_color
+        self.error_color = error_color
+        self.warning_color = warning_color
 
         self.check_dir()
         self.ex = self.check_ex()
@@ -426,20 +452,21 @@ class ScoreModule:
             answers = len(
                 set(map(lambda x: x.split("_")[1], os.listdir(self.answer_dir))))
         except IndexError:
-            printf(f"Name of TC and Answer Files should be form of {RED}ex#_#")
+            printf(
+                f"Name of TC and Answer Files should be form of {self.error}ex#_#")
 
         ex = min(tcs, answers)
 
         if tcs != answers:
             printf(
-                f"Assuming {ex} Exercises (Given {tcs} from TC / {answers} from ANS)")
+                f"Assuming {ex} Exercises (Given {tcs} from TC / {answers} from ANS)", self.warning_color)
 
         return ex
 
     def program(self):
         _copyright()
         printf(
-            f"Grading On: {BLUE}LAB{self.lab}{WHITE}[{BLUE}{self.ex} {WHITE}Exercises]")
+            f"Grading On: {self.main_color}LAB{self.lab}{WHITE}[{self.main_color}{self.ex} {WHITE}Exercises]")
         while True:
             try:
                 answer = int(input(
@@ -450,31 +477,34 @@ class ScoreModule:
 
             if answer == 1:
                 try:
-                    ex = int(input(f"Ex # To Grade [{self.ex} EX]: "))
+                    ex = int(
+                        input(f"Ex # To Manage (or Create)[{self.ex} EX Existing]: "))
+                    assert ex > 0
                 except:
                     printf('_' * self.padding)
                     continue
 
                 ex = min(ex, self.ex + 1)
                 manager = TestcaseManager(
-                    self.lab, ex, self.tc_dir, self.answer_dir, padding=self.padding)
+                    self.lab, ex, self.tc_dir, self.answer_dir, padding=self.padding, alt_color=YELLOW)
             elif answer == 2:
                 try:
                     ex = int(input(f"Ex # To Grade [{self.ex} EX]: "))
                     if ex > self.ex or ex < 1:
                         printf(
-                            f"Enter Ex # between 1 and {self.ex}" if self.ex else f"Add Exercises First", RED)
+                            f"Enter Ex # between 1 and {self.ex}" if self.ex else f"Add Exercises First", self.error_color)
                         printf('_' * self.padding)
                         continue
                 except:
                     printf('_' * self.padding)
                     continue
                 grader = Grader(self.lab, ex, self.submission_dir, self.tc_dir, self.answer_dir,
-                                self.score_dir, padding=self.padding)
+                                self.score_dir, padding=self.padding, alt_color=CYAN)
                 grader.grade()
 
             elif answer == 3:
-                summary = Summarizer(self.lab, self.score_dir, self.padding)
+                summary = Summarizer(
+                    self.lab, self.score_dir, self.padding, alt_color=CYAN)
                 summary.read_data()
             elif answer == 4 or answer == 0:
                 return
@@ -482,5 +512,13 @@ class ScoreModule:
             printf('_' * self.padding)
 
 
-module = ScoreModule(1, 60)
-module.program()
+def main(lab, **kwargs):
+    module = ScoreModule(lab, **kwargs)
+    module.program()
+
+
+if __name__ == "__main__":
+    lab = sys.argv[1]
+    kwargs = dict(arg.split("=") for arg in sys.argv[2:])
+
+    main(lab, **kwargs)
