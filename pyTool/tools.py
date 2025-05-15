@@ -119,6 +119,7 @@ class TestcaseManager:
         self.tc_dir = tc_dir
         self.answer_dir = answer_dir
         self.n = self.check_tc()
+        self.new = False
         self.changes = set()
         self.testcases = []
         self.padding = padding
@@ -142,7 +143,7 @@ class TestcaseManager:
             try:
                 self.n = int(input("Enter # of TC to Create: "))
                 assert self.n > 0
-            except AssertionError:
+            except:
                 printf("Invalid Number Given, Creating 3 TC as Default",
                        self.warning_color)
                 self.n = 3
@@ -158,6 +159,7 @@ class TestcaseManager:
                 self.testcases.append(new_tc)
 
             printf("=" * self.padding, self.main_color)
+            self.new = True
             return
 
         printf("Current Testcases".center(self.padding, "="), self.alt_color)
@@ -384,7 +386,7 @@ class Grader:
 
         if len(scores) == 0:
             printf(
-                f"Could not find submissions. Make sure submissions are in the directory [{self.submission_dir}/]", self.warning_color)
+                f"Could not find submissions. Make sure submissions are in the directory [{UNDERLINE(GRAY)}{self.submission_dir}/{self.warning_color}]", self.warning_color)
             return scores
 
         if save:
@@ -562,6 +564,7 @@ class ScoreModule:
                 ex = min(ex, self.ex + 1)
                 manager = TestcaseManager(
                     self.lab, ex, self.tc_dir, self.answer_dir, padding=self.padding, main_color=self.main_color, alt_color=self.tc_color)
+                self.ex += 1 if manager.new else 0
             elif answer == 2:
                 if self.ex == 0:
                     printf(f"Add Exercises First", self.error_color)
