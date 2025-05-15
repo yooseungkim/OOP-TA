@@ -1,13 +1,13 @@
-Session #,Student ID,TC1_1,ANS1_1,TC1_2,ANS1_2,TC1_3,ANS1_3,TC1_4,ANS1_4,TC1_5,ANS1_5,Points1
-Lab1,s20215049,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,0
-Lab1,s20215047,X,No Submission,X,No Submission,X,No Submission,X,No Submission,X,No Submission,0
-Lab1,s20215048,O,,O,,O,,O,,O,,10
-Lab2,s20215049,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,0
-Lab2,s20215047,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,0
-Lab2,s20215048,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,0
-Lab3,s20215049,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,0
-Lab3,s20215047,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,0
-Lab3,s20215048,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,0
-Lab4,s20215049,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,0
-Lab4,s20215047,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,0
-Lab4,s20215048,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,0
+Session #,Student ID,TC1_1,ANS1_1,TC1_2,ANS1_2,TC1_3,ANS1_3,TC1_4,ANS1_4,TC1_5,ANS1_5,TC1_6,ANS1_6,Points1
+Lab1,s20215049,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,0
+Lab1,s20215047,X,No Submission,X,No Submission,X,No Submission,X,No Submission,X,No Submission,X,No Submission,0
+Lab1,s20215048,O,,O,,O,,O,,O,,X,hello,0
+Lab2,s20215049,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,0
+Lab2,s20215047,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,0
+Lab2,s20215048,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,0
+Lab3,s20215049,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,0
+Lab3,s20215047,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,0
+Lab3,s20215048,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,0
+Lab4,s20215049,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,0
+Lab4,s20215047,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,0
+Lab4,s20215048,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,X,hello world1,0

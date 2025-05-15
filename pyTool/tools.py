@@ -12,15 +12,28 @@ MAGENTA = "\\e[0;35m"
 CYAN = "\\e[0;36m"
 GRAY = "\\e[0;37m"
 WHITE = "\\e[0;38m"
+DEFAULT = '\\e[0m'
+
+
+def BOLD(color):
+    return color.replace('0;', '1;')
+
+
+def UNDERLINE(color):
+    return color.replace('0;', '4;')
+
+
+def BACKGROUND(color):
+    return color.replace('0;3', '4')
 
 
 def printf(string: str, color: str = "", end: str = "\n") -> None:
-    os.system(f'printf "{color}{string}{end}{WHITE}"')
+    os.system(f'printf "{color}{string}{end}{DEFAULT}"')
 
 
 def _copyright():
     printf(
-        f"{RED}GIST {WHITE}Computer Programming Assignment Autograder [GS1401/GS2408]")
+        f"{RED}GIST {DEFAULT}Computer Programming Assignment Autograder [GS1401/GS2408]")
     printf("©Yooseung Kim, GIST EECS".rjust(60), BLUE)
 
 
@@ -66,10 +79,10 @@ class Testcase:
         tc = '\n' + self.input if '\n' in self.input else self.input
         answer = '\n' + self.output if '\n' in self.output else self.output
         printf(
-            f"LAB{self.lab} EX{self.ex}-{self.tc_no}".center(self.padding, "-"), WHITE)
-        printf(f"{self.main_color}TESTCASE{WHITE}: {tc if tc else 'No Input'}")
+            f"LAB{self.lab} EX{self.ex}-{self.tc_no}".center(self.padding, "-"), DEFAULT)
+        printf(f"{self.main_color}TESTCASE{DEFAULT}: {tc if tc else 'No Input'}")
         printf(
-            f"{self.alt_color}ANSWER{WHITE}  : {answer if answer else 'No Output'}")
+            f"{self.alt_color}ANSWER{DEFAULT}  : {answer if answer else 'No Output'}")
 
     def read_testcase(self):
         try:
@@ -244,7 +257,7 @@ class TestcaseManager:
                 answer = int(
                     input(f"[1]Preview [2]Add [3]Save{f'({len(self.changes)} changes)' if len(self.changes) else ""} [4]Modify [5]Delete [6/0]Exit: "))
             except:
-                printf('_' * self.padding, WHITE)
+                printf('_' * self.padding, DEFAULT)
                 continue
 
             if answer == 0:
@@ -262,7 +275,7 @@ class TestcaseManager:
                 self.delete()
             elif answer == 6:
                 return
-            printf('_' * self.padding, WHITE)
+            printf('_' * self.padding, DEFAULT)
 
 
 class Grader:
@@ -322,7 +335,8 @@ class Grader:
 
             for student_id in os.listdir(f"{self.submission_dir}/{lab_dir}"):
                 result = [lab_dir, student_id]
-                printf(f"Checking {self.alt_color}{student_id}{WHITE}")
+                printf(
+                    f"Checking {self.alt_color}{student_id}{DEFAULT}")
 
                 student_path = f"{self.submission_dir}/{lab_dir}/{student_id}"
                 compile_path = f"{student_path}/ex{self.lab}_{self.ex}"
@@ -361,7 +375,7 @@ class Grader:
                         result += ['O', output.stdout.strip()]
                     else:
                         printf(
-                            f"    {self.error_color}RESULT: {output.stdout.strip() if output.stdout else 'ø'} {WHITE}<-> EXPECTED: {ans.strip() if ans else 'ø'}")
+                            f"    {self.error_color}RESULT: {output.stdout.strip() if output.stdout else 'ø'} {DEFAULT}<-> EXPECTED: {ans.strip() if ans else 'ø'}")
                         result += ['X', output.stdout.strip()]
                         correct = False
                 result += [self.points if correct else 0]
@@ -386,11 +400,12 @@ class Grader:
         data.columns = columns
 
         data.to_csv(self.csv_path, index=False)
-        printf(f"EXPORTED CSV FILE [{self.csv_path}]", self.good_color)
+        printf(
+            f"{self.good_color}EXPORTED CSV FILE [{UNDERLINE(GRAY)}{self.csv_path}{self.good_color}]")
         return
 
     def show_grade_ops(self):
-        printf(f"Points: {self.main_color}{self.points}{WHITE}, Compiler: {self.alt_color}{"g++" if self.cpp else "gcc"}{WHITE}, Recompile: {self.alt_color}{self.recompile}")
+        printf(f"Points: {self.main_color}{self.points}{DEFAULT}, Compiler: {self.alt_color}{"g++" if self.cpp else "gcc"}{DEFAULT}, Recompile: {self.alt_color}{self.recompile}")
 
     def set_grade_opts(self):
         printf(
@@ -431,7 +446,8 @@ class Summarizer:
         if not os.path.isdir(self.score_dir):
             printf("Directory Does Not Exist. Please Grade Scores First.", RED)
 
-        scores = pd.DataFrame(columns=['Session #', 'Student ID', 'Points'])
+        scores = pd.DataFrame(
+            columns=['Session #', 'Student ID', 'Total Points'])
         printf("Reading Score Data", CYAN)
         suffix = 1
         for ex in subprocess.run(f"ls {self.score_dir}/ex{self.lab}_*_score.csv", shell=True, capture_output=True, text=True).stdout.split('\n'):
@@ -441,23 +457,28 @@ class Summarizer:
                 'Session #', 'Student ID'], how='outer')
             suffix += 1
 
-        scores['Points'] = sum(scores[f'Points{i}'] for i in range(1, suffix))
+        scores['Total Points'] = sum(
+            scores[f'Points{i}'] for i in range(1, suffix))
         scores.to_csv(f"{self.score_dir}/Lab{self.lab}.csv", index=False)
         printf(
-            f"Successfully Exported Summary [{self.score_dir}/Lab{self.lab}.csv]", GREEN)
+            f"{self.good_color}Successfully Exported Summary [{UNDERLINE(GRAY)}{self.score_dir}/Lab{self.lab}.csv{self.good_color}]")
 
         self.review_data(scores)
         return scores
 
     def review_data(self, data):
+        printf(f"SUMMARY".center(self.padding, "="), self.main_color)
         print(data.groupby('Session #').describe())
 
 
 class ScoreModule:
-    def __init__(self, lab, main_color=BLUE, good_color=GREEN, error_color=RED, warning_color=MAGENTA, padding=60, cpp=True, recompile=False):
+    def __init__(self, lab, main_color=BOLD(BLUE), tc_color=YELLOW, grader_color=CYAN, summary_color=CYAN,  good_color=GREEN, error_color=RED, warning_color=MAGENTA, padding=60, cpp=True, recompile=False):
         self.lab = lab
         self.padding = int(padding)
         self.main_color = main_color
+        self.tc_color = tc_color
+        self.grader_color = grader_color
+        self.summary_color = summary_color
         self.good_color = good_color
         self.error_color = error_color
         self.warning_color = warning_color
@@ -514,7 +535,7 @@ class ScoreModule:
     def program(self):
         _copyright()
         printf(
-            f"Grading On: {self.main_color}LAB{self.lab}{WHITE}[{self.main_color}{self.ex} {WHITE}Exercises]")
+            f"Grading On: {self.main_color}LAB{self.lab}{DEFAULT}[{self.main_color}{self.ex} {DEFAULT}Exercises]")
         while True:
             try:
                 answer = int(input(
@@ -534,7 +555,7 @@ class ScoreModule:
 
                 ex = min(ex, self.ex + 1)
                 manager = TestcaseManager(
-                    self.lab, ex, self.tc_dir, self.answer_dir, padding=self.padding, alt_color=YELLOW)
+                    self.lab, ex, self.tc_dir, self.answer_dir, padding=self.padding, main_color=self.main_color, alt_color=self.tc_color)
             elif answer == 2:
                 try:
                     ex = int(input(f"Ex # To Grade [{self.ex} EX]: "))
@@ -547,12 +568,12 @@ class ScoreModule:
                     printf('_' * self.padding)
                     continue
                 grader = Grader(self.lab, ex, self.submission_dir, self.tc_dir, self.answer_dir,
-                                self.score_dir, padding=self.padding, alt_color=CYAN, cpp=self.cpp, recompile=self.recompile)
+                                self.score_dir, padding=self.padding, main_color=self.main_color, alt_color=self.grader_color, cpp=self.cpp, recompile=self.recompile)
                 grader.grade()
 
             elif answer == 3:
                 summary = Summarizer(
-                    self.lab, self.score_dir, self.padding, alt_color=CYAN)
+                    self.lab, self.score_dir, self.padding, main_color=self.main_color, alt_color=self.summary_color)
                 summary.export_data()
             elif answer == 4 or answer == 0:
                 return
@@ -561,7 +582,12 @@ class ScoreModule:
 
 
 def main(lab, **kwargs):
-    module = ScoreModule(lab, **kwargs)
+    main_color = BOLD(BLUE)
+    tc_color = YELLOW
+    grader_color = CYAN
+    summary_color = CYAN
+    module = ScoreModule(lab, main_color=main_color, tc_color=tc_color,
+                         grader_color=grader_color, summary_color=summary_color, **kwargs)
     module.program()
 
 
