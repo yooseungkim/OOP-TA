@@ -281,6 +281,9 @@ class Grader:
         self.good_color = good_color
         self.alt_color = alt_color
         self.error_color = error_color
+        self.warning_color = warning_color
+        self.points = 10
+        self.recompile = True
         self.TCManager = TestcaseManager(
             self.lab, self.ex, self.tc_dir, self.answer_dir, start=False, padding=self.padding)
         printf("AUTOGRADER".center(self.padding, "="), self.main_color)
@@ -295,9 +298,14 @@ class Grader:
 
         return tcs
 
-    def grade(self, recompile=True, save=True):
+    def grade(self, save=True):
         if not os.path.isdir(self.score_dir):
             os.makedirs(self.score_dir)
+
+        self.show_grade_ops()
+
+        while input("Confirm Grading Options?[Y,y/N]: ").strip().capitalize() != "Y":
+            self.set_grade_opts()
 
         ext = ".cpp" if self.cpp else ".c"
         compiler = "g++" if self.cpp else "gcc"
@@ -319,7 +327,7 @@ class Grader:
                 student_path = f"{self.submission_dir}/{lab_dir}/{student_id}"
                 compile_path = f"{student_path}/ex{self.lab}_{self.ex}"
 
-                if recompile or not os.path.isfile(compile_path):
+                if self.recompile or not os.path.isfile(compile_path):
                     # Check Submission (cpp file)
                     if not os.path.isfile(compile_path + ext):
                         printf(
@@ -357,6 +365,11 @@ class Grader:
                 scores.append(result)
         printf("GRADING COMPLETED".center(self.padding, "="), self.main_color)
 
+        if len(scores) == 0:
+            printf(
+                f"Could not find submissions. Make sure submissions are in the directory [{self.submission_dir}/]", self.warning_color)
+            return scores
+
         if save:
             self.to_csv(scores)
         return scores
@@ -372,8 +385,33 @@ class Grader:
         printf(f"EXPORTED CSV FILE [{self.csv_path}]", self.good_color)
         return
 
-    def grade_opts(self):
-        pass
+    def show_grade_ops(self):
+        printf(f"Points: {self.main_color}{self.points}{WHITE}, Compiler: {self.alt_color}{"g++" if self.cpp else "gcc"}{WHITE}, Recompile: {self.alt_color}{self.recompile}")
+
+    def set_grade_opts(self):
+
+        printf(
+            f"Enter options separated by comma, e.g. {self.main_color}'points=#, compiler=gcc, recompile=false'")
+        try:
+            answer = input(
+                "Case INsensitive, may omit options to use default: ").split(',')
+
+            opts = dict(arg.split("=") for arg in answer)
+
+            if "points" in opts.keys():
+                self.points = int(opts["points"])
+            if "compiler" in opts.keys():
+                self.cpp = False if opts['compiler'].strip(
+                ).lower() == "gccs" else True
+            if "recompile" in opts.keys():
+                self.recompile = False if opts['recompile'].strip(
+                ).lower() == "false" else True
+        except:
+            if len(answer) == 0:
+                return
+            printf("Invalid Input", self.error_color)
+
+        return
 
 
 class Summarizer:
