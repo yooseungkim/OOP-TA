@@ -299,6 +299,7 @@ class Grader:
         self.warning_color = warning_color
         self.points = 10
         self.recompile = recompile
+        self.std = 'c++11' if cpp else 'c11'
         self.TCManager = TestcaseManager(
             self.lab, self.ex, self.tc_dir, self.answer_dir, start=False, padding=self.padding)
         printf("AUTOGRADER".center(self.padding, "="), self.main_color)
@@ -355,7 +356,7 @@ class Grader:
                     # Compile
                     try:
                         subprocess.run(
-                            f"{compiler} {compile_path}*{ext} -o {compile_path}", shell=True, capture_output=True, check=True, text=True)
+                            f"{compiler} -std={self.std} {compile_path}*{ext} -o {compile_path}", shell=True, capture_output=True, check=True, text=True)
                     except:
                         printf("    COMPILE ERROR", self.error_color)
                         result += ['X', 'No Submission'] * self.tc_no + [0]
@@ -407,11 +408,11 @@ class Grader:
         return
 
     def show_grade_ops(self):
-        printf(f"Points: {self.main_color}{self.points}{DEFAULT}, Compiler: {self.alt_color}{"g++" if self.cpp else "gcc"}{DEFAULT}, Recompile: {self.alt_color}{self.recompile}")
+        printf(f"Points: {self.main_color}{self.points}{DEFAULT}, Compiler: {self.alt_color}{"g++" if self.cpp else "gcc"}{DEFAULT}, C/C++: -std={self.std}, Recompile: {self.alt_color}{self.recompile}")
 
     def set_grade_opts(self):
         printf(
-            f"Enter options separated by comma, e.g. {self.main_color}'points=#, compiler=gcc, recompile=false'")
+            f"Enter options separated by comma, e.g. {self.main_color}'points=#, compiler=gcc, -std=c11, recompile=false'")
         try:
             answer = input(
                 "Case INsensitive, may omit options to use default: ").split(',')
@@ -422,10 +423,21 @@ class Grader:
                 self.points = int(opts["points"])
             if "compiler" in opts.keys():
                 self.cpp = False if opts['compiler'].strip(
-                ).lower() == "gccs" else True
+                ).lower() == "gcc" else True
+                if self.cpp:
+                    self.std = 'c++11'
+                else:
+                    self.std = 'c11'
             if "recompile" in opts.keys():
                 self.recompile = False if opts['recompile'].strip(
                 ).lower() == "false" else True
+
+            if "-std" in opts.keys() or 'std' in opts.keys():
+                self.std = opts.get('-std', opts.get('std', "c++11"))
+
+            if (self.cpp and "++" not in self.std) or (not self.cpp and "++" in self.std):
+                printf(
+                    f"Compiler({'g++' if self.cpp else 'gcc'}) and C/C++ standard(-std={self.std}) does not match", self.warning_color)
         except:
             if len(answer) == 0:
                 return
