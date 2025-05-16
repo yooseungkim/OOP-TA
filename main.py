@@ -179,8 +179,8 @@ class TestcaseManager:
         self.n += 1
         new_tc = Testcase(self.lab, self.ex, self.n, self.tc_dir,
                           self.answer_dir, tc, answer,  self.padding)
+        new_tc.save()
         self.testcases.append(new_tc)
-        self.changes.add(self.n)
 
         printf("Successfully Added!", self.good_color)
 
@@ -257,7 +257,7 @@ class TestcaseManager:
         while True:
             try:
                 answer = int(
-                    input(f"[1]Preview [2]Add [3]Save{f'({len(self.changes)} changes)' if len(self.changes) else ""} [4]Modify [5]Delete [6/0]Exit: "))
+                    input(f"[1]Preview [2]Add [3] Modify [4]Save{f'({len(self.changes)} changes)' if len(self.changes) else ""} [5]Delete [6/0]Exit: "))
             except:
                 printf('_' * self.padding, DEFAULT)
                 continue
@@ -270,9 +270,9 @@ class TestcaseManager:
             elif answer == 2:
                 self.append_testcase()
             elif answer == 3:
-                self.publish()
-            elif answer == 4:
                 self.modify()
+            elif answer == 4:
+                self.publish()
             elif answer == 5:
                 self.delete()
             elif answer == 6:
@@ -498,7 +498,7 @@ class ScoreModule:
 
     @property
     def submission_dir(self):
-        return f"{self.cwd}/../Submission/Lab{self.lab}"
+        return f"{self.cwd}/Submission/Lab{self.lab}"
 
     @property
     def answer_dir(self):
@@ -510,7 +510,7 @@ class ScoreModule:
 
     @property
     def score_dir(self):
-        return f"{self.cwd}/../Scores/Lab{self.lab}"
+        return f"{self.cwd}/Scores/Lab{self.lab}"
 
     def check_dir(self):
         if not os.path.isdir(self.answer_dir):

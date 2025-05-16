@@ -84,6 +84,8 @@ python main.py 1 recompile=true padding=60 compiler=gcc
 | `padding`   | Output padding (int)                 |
 | `compiler`  | Compiler to use (`g++` or `gcc`) |
 
+For GS1401, use `compiler=gcc`. For GS2401, use default value(`compiler=g++`)
+
 ---
 
 ### 2️⃣ Menu Options
@@ -95,6 +97,23 @@ After launching:
 [2] EX Grader             → Compile & test student submissions
 [3] Lab Score Summarizer  → Merge & summarize CSV scores
 [4/0] Exit
+```
+
+---
+
+
+
+### 3️⃣Menu Options for Testcase Manager
+
+After selecting `[1]Testcase` 
+
+```
+[1] Preview     → Preview testcase input & output
+[2] Add         → Add new testcase input & output
+[3] Modify	→ Modify testcase input & output
+[4] Save  	→ Save changes (only after Modifying)
+[5] Delete	→ Delete Testcase 
+[6/0] Exit	→ Exit without saving
 ```
 
 ---
@@ -121,15 +140,8 @@ Example for Lab 1, Exercise 2, Testcase 3:
 
 ---
 
-## 🖍 Terminal Colors
-
-The script uses ANSI escape codes for color formatting (works in Unix-like terminals).
-Colors include: `RED`, `GREEN`, `YELLOW`, `BLUE`, `CYAN`, etc.
-
----
-
 ## 🧑‍💻 Author
 
-- **Yooseung Kim**
-  Dept. of EECS, GIST
-  [Email Me](mailto:yooseungkim@gm.gist.ac.kr)
+**Yooseung Kim**
+[Contact: yooseungkim@gm.gist.ac.kr](mailto:yooseungkim@gm.gist.ac.kr)
+Dept. of EECS, Gwangju Institute of Science and Technology
