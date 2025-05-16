@@ -78,13 +78,17 @@ Optional kwargs:
 python main.py 1 recompile=true padding=60 compiler=gcc
 ```
 
-| Option        | Description                          |
-| ------------- | ------------------------------------ |
-| `recompile` | Force recompilation (true/false)     |
-| `padding`   | Output padding (int)                 |
-| `compiler`  | Compiler to use (`g++` or `gcc`) |
+| Option        | Description                           |
+| ------------- | ------------------------------------- |
+| `recompile` | Force recompilation (true/**false**) |
+| `padding`   | Output padding (int)                  |
+| `compiler`  | Compiler to use (`g++` or `gcc`)  |
 
 For GS1401, use `compiler=gcc`. For GS2401, use default value(`compiler=g++`)
+
+`recompile=True` will recompile for all submissions in any case Use when you are grading with other compiler option(`gcc/g++/c+11/c17...`) [Slower]
+
+`recompile=False` will not recompile if corresponding **executable file exists.** If no executable file exists, it will compile the source code. [Faster/Default option]
 
 ---
 
