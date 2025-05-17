@@ -140,22 +140,17 @@ class TestcaseManager:
         if self.n == 0:
             printf("Created New Exercise", self.main_color)
             try:
-                self.n = int(input("Enter # of TC to Create: "))
-                assert self.n > 0
+                # n is local variable
+                n = int(input("Enter # of TC to Create: "))
+                assert n > 0
             except:
                 printf("Invalid Number Given, Creating 3 TC as Default",
                        self.warning_color)
-                self.n = 3
+                n = 3
 
-            for i in range(1, self.n + 1):
-                tc = input(
-                    f"[EX{self.ex}-{i}]Enter Testcase Input: ").strip()
-                answer = input(
-                    f"[EX{self.ex}-{i}]Enter Testcase Answer: ").strip()
-
-                new_tc = Testcase(self.lab, self.ex, i, self.tc_dir,
-                                  self.answer_dir, tc=tc, answer=answer, padding=self.padding)
-                self.testcases.append(new_tc)
+            for i in range(n):
+                printf(f"Exercise {i + 1} / {n}".center(self.padding, "-"))
+                self.append_testcase()
 
             printf("=" * self.padding, self.main_color)
             self.new = True
@@ -528,7 +523,7 @@ class Summarizer:
 
 
 class ScoreModule:
-    def __init__(self, lab, main_color=BOLD(BLUE), tc_color=YELLOW, grader_color=CYAN, summary_color=CYAN,  good_color=GREEN, error_color=RED, warning_color=MAGENTA, padding=60, cpp=True, recompile=False):
+    def __init__(self, lab, main_color=BOLD(BLUE), tc_color=YELLOW, grader_color=CYAN, summary_color=CYAN,  good_color=GREEN, error_color=RED, warning_color=MAGENTA, padding=70, cpp=True, recompile=False):
         self.lab = lab
         self.padding = int(padding)
         self.main_color = main_color
@@ -596,6 +591,7 @@ class ScoreModule:
             try:
                 answer = int(input(
                     "[1]Testcase Manager [2]EX Grader [3]Lab Score Summarizer [4/0]Exit: "))
+                printf('_' * self.padding)
             except:
                 printf('_' * self.padding)
                 continue
