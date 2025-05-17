@@ -11,7 +11,7 @@ int main() {
 
     sum = num1 + num2;
 
-    std::cout << "The sum is: " << sum << std::endl;
+    std::cout << sum << std::endl;
 
     return 0;
 }

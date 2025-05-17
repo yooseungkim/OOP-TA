@@ -104,7 +104,6 @@ class Testcase:
             tc.write(self.input)
         with open(self.new_answer_path, "w") as answer:
             answer.write(self.output)
-
         self.tc_no = self.new_tc_no
 
     def delete(self):
@@ -173,8 +172,22 @@ class TestcaseManager:
             self.padding, "="), self.alt_color)
 
     def append_testcase(self) -> None:
-        tc = input("Enter Testcase Input: ").strip()
-        answer = input("Enter Testcase Answer: ").strip()
+
+        printf(f"{self.main_color}NEW TESTCASE {DEFAULT}(leave blank to end)")
+        tc = ""
+        while True:
+            a = sys.stdin.readline()
+            if a == "\n":
+                break
+            tc += a
+
+        printf(f"{self.alt_color}NEW ANSWER   {DEFAULT}(leave blank to end)")
+        answer = ""
+        while True:
+            a = sys.stdin.readline()
+            if a == "\n":
+                break
+            answer += a
 
         self.n += 1
         new_tc = Testcase(self.lab, self.ex, self.n, self.tc_dir,
@@ -214,8 +227,23 @@ class TestcaseManager:
         printf("Current".center(self.padding, "="), self.alt_color)
         modified_tc = self.testcases[tc_no - 1]
         modified_tc.preview()
-        tc = input("Enter Testcase Input: ").strip()
-        answer = input("Enter Testcase Answer: ").strip()
+
+        printf("-" * self.padding, DEFAULT)
+        printf(f"{self.main_color}NEW TESTCASE {DEFAULT}(leave blank to end)")
+        tc = ""
+        while True:
+            a = sys.stdin.readline()
+            if a == "\n":
+                break
+            tc += a
+
+        printf(f"{self.alt_color}NEW ANSWER   {DEFAULT}(leave blank to end)")
+        answer = ""
+        while True:
+            a = sys.stdin.readline()
+            if a == "\n":
+                break
+            answer += a
 
         modified_tc.input = tc
         modified_tc.output = answer
@@ -364,7 +392,7 @@ class Grader:
                         continue
 
                 correct = True
-                for tc, ans in testcases:
+                for k, (tc, ans) in enumerate(testcases):
                     output = subprocess.run(
                         [f'{compile_path}'], input=tc, capture_output=True, shell=True, text=True)
 
@@ -374,13 +402,15 @@ class Grader:
                         result += ['X', "Runtime Error"]
 
                     if output.stdout.strip() == ans.strip():
-                        printf("    CORRECT", self.good_color)
+                        # printf("    CORRECT", self.good_color)
                         result += ['O', output.stdout.strip()]
                     else:
                         printf(
-                            f"    {self.error_color}RESULT: {output.stdout.strip() if output.stdout else 'ø'} {DEFAULT}<-> EXPECTED: {ans.strip() if ans else 'ø'}")
+                            f"    {self.error_color}[{self.ex}-{k+1}] RESULT: {output.stdout.strip().replace('\n', f'{YELLOW}/{self.error_color}') if output.stdout else 'ø'} {DEFAULT}<-> EXPECTED: {ans.strip().replace('\n', f'{YELLOW}/{DEFAULT}') if ans else 'ø'}")
                         result += ['X', output.stdout.strip()]
                         correct = False
+                if correct:
+                    printf("    CORRECT", self.good_color)
                 result += [self.points if correct else 0]
                 scores.append(result)
         printf("GRADING COMPLETED".center(self.padding, "="), self.main_color)
@@ -408,7 +438,7 @@ class Grader:
         return
 
     def show_grade_ops(self):
-        printf(f"Points: {self.main_color}{self.points}{DEFAULT}, Compiler: {self.alt_color}{"g++" if self.cpp else "gcc"}{DEFAULT}, C/C++: -std={self.std}, Recompile: {self.alt_color}{self.recompile}")
+        printf(f"Points: {self.main_color}{self.points}{DEFAULT}, Compiler: {self.alt_color}{"g++" if self.cpp else "gcc"}{DEFAULT}, C/C++: {self.alt_color}-std={self.std}{DEFAULT}, Recompile: {self.alt_color}{self.recompile}")
 
     def set_grade_opts(self):
         printf(

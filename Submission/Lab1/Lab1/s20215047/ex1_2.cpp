@@ -11,7 +11,7 @@ int main() {
 
     sum = num1 / 0; // Division by zero will cause a runtime error.
 
-    std::cout << "The sum is: " << sum << std::endl;
+    std::cout << sum << std::endl;
 
     return 0;
 }
