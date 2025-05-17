@@ -290,7 +290,14 @@ class TestcaseManager:
                 printf('_' * self.padding, DEFAULT)
                 continue
 
-            if answer == 0:
+            if answer == 0 or answer == 6:
+                if len(self.changes):
+                    ans = input(
+                        f"You have {len(self.changes)} unsaved changes. Exit without saving? [Y,y/N]: ")
+                    if ans.capitalize() == "Y":
+                        return
+                    else:
+                        continue
                 return
             elif answer == 1:
                 for tc in self.testcases:
@@ -303,8 +310,7 @@ class TestcaseManager:
                 self.publish()
             elif answer == 5:
                 self.delete()
-            elif answer == 6:
-                return
+
             printf('_' * self.padding, DEFAULT)
 
 
