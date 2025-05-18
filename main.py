@@ -38,7 +38,7 @@ def _copyright():
 
 
 class Testcase:
-    def __init__(self, lab, ex, tc_no, tc_dir, answer_dir, tc="", answer="", padding=50, main_color=BLUE, alt_color=YELLOW, error_color=RED, warning_color=MAGENTA):
+    def __init__(self, lab, ex, tc_no, tc_dir, answer_dir, tc_path, answer_path, tc="", answer="", padding=50, main_color=BLUE, alt_color=YELLOW, error_color=RED, warning_color=MAGENTA):
         self.lab = lab
         self.ex = ex
         self.tc_no = tc_no
@@ -53,15 +53,9 @@ class Testcase:
         self.alt_color = alt_color
         self.error_color = error_color
         self.warning_color = warning_color
+        self.answer_path = answer_path
+        self.tc_path = tc_path
         self.read_testcase()
-
-    @property
-    def answer_path(self):
-        return f"{self.answer_dir}/ex{self.lab}_{self.ex}_{self.tc_no}.txt"
-
-    @property
-    def tc_path(self):
-        return f"{self.tc_dir}/ex{self.lab}_{self.ex}_{self.tc_no}.txt"
 
     @property
     def new_answer_path(self):
@@ -99,7 +93,6 @@ class Testcase:
                 self.is_new = True
 
     def save(self):
-        self.delete()
         with open(self.new_tc_path, "w") as tc:
             tc.write(self.input)
         with open(self.new_answer_path, "w") as answer:
@@ -127,6 +120,8 @@ class TestcaseManager:
         self.good_color = good_color
         self.error_color = error_color
         self.warning_color = warning_color
+        self.tc_paths = []
+        self.answer_paths = []
         self.read_testcases()
         if start:
             self.program()
@@ -138,7 +133,7 @@ class TestcaseManager:
 
     def read_testcases(self) -> None:
         if self.n == 0:
-            printf("Created New Exercise", self.main_color)
+            printf(f"{self.main_color}Created New Exercise")
             try:
                 # n is local variable
                 n = int(input("Enter # of TC to Create: "))
@@ -152,14 +147,19 @@ class TestcaseManager:
                 printf(f"Exercise {i + 1} / {n}".center(self.padding, "-"))
                 self.append_testcase()
 
-            printf("=" * self.padding, self.main_color)
+            printf("".center(self.padding, '_'), self.main_color)
             self.new = True
             return
 
         printf("Current Testcases".center(self.padding, "="), self.alt_color)
-        for i in range(1, self.n + 1):
-            new_tc = Testcase(self.lab, self.ex, i, self.tc_dir,
-                              self.answer_dir, padding=self.padding)
+        self.tcs = list(
+            filter(lambda x: f"ex{self.lab}_{self.ex}_" in x, os.listdir(self.tc_dir)))
+        self.answers = list(
+            filter(lambda x: f"ex{self.lab}_{self.ex}_" in x, os.listdir(self.answer_dir)))
+
+        for index, (tc_path, answer_path) in enumerate(zip(self.tcs, self.answers)):
+            new_tc = Testcase(self.lab, self.ex, index + 1, self.tc_dir,
+                              self.answer_dir, f'{self.tc_dir}/{tc_path}', f'{self.answer_dir}/{answer_path}', padding=self.padding)
             self.testcases.append(new_tc)
             new_tc.preview()
 
@@ -185,10 +185,14 @@ class TestcaseManager:
             answer += a
 
         self.n += 1
+        tc_path = f'ex{self.lab}_{self.ex}_{self.n}.txt'
+        answer_path = f'ex{self.lab}_{self.ex}_{self.n}.txt'
         new_tc = Testcase(self.lab, self.ex, self.n, self.tc_dir,
-                          self.answer_dir, tc, answer,  self.padding)
+                          self.answer_dir, f'{self.tc_dir}/{tc_path}', f'{self.answer_dir}/{answer_path}', tc, answer,  self.padding)
         new_tc.save()
         self.testcases.append(new_tc)
+        self.tc_paths.append(tc_path)
+        self.answer_paths.append(answer_path)
 
         printf("Successfully Added!", self.good_color)
 
@@ -203,6 +207,10 @@ class TestcaseManager:
         printf("[It cannot be Undone]", self.warning_color)
 
         if input().capitalize() == "Y":
+            for tc in self.tc_paths:
+                os.remove(f'{self.tc_dir}/{tc}')
+            for answer in self.answer_paths:
+                os.remove(f'{self.answer_dir}/{answer}')
             for tc in self.testcases:
                 tc.save()
             printf("Successfully Saved!", self.good_color)
@@ -343,9 +351,6 @@ class Grader:
         return len(output)
 
     def grade(self, save=True):
-        if not os.path.isdir(self.score_dir):
-            os.makedirs(self.score_dir)
-
         self.show_grade_ops()
         while input("Confirm Grading Options?[Y,y/N]: ").strip().capitalize() != "Y":
             self.set_grade_opts()
