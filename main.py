@@ -144,7 +144,7 @@ class TestcaseManager:
                 n = 3
 
             for i in range(n):
-                printf(f"Exercise {i + 1} / {n}".center(self.padding, "-"))
+                printf(f"Exercise {i + 1} / {n}".center(self.padding, "_"))
                 self.append_testcase()
 
             printf("".center(self.padding, '_'), self.main_color)
@@ -152,12 +152,12 @@ class TestcaseManager:
             return
 
         printf("Current Testcases".center(self.padding, "="), self.alt_color)
-        self.tcs = list(
+        self.tc_paths = list(
             filter(lambda x: f"ex{self.lab}_{self.ex}_" in x, os.listdir(self.tc_dir)))
-        self.answers = list(
+        self.answer_paths = list(
             filter(lambda x: f"ex{self.lab}_{self.ex}_" in x, os.listdir(self.answer_dir)))
 
-        for index, (tc_path, answer_path) in enumerate(zip(self.tcs, self.answers)):
+        for index, (tc_path, answer_path) in enumerate(zip(self.tc_paths, self.answer_paths)):
             new_tc = Testcase(self.lab, self.ex, index + 1, self.tc_dir,
                               self.answer_dir, f'{self.tc_dir}/{tc_path}', f'{self.answer_dir}/{answer_path}', padding=self.padding)
             self.testcases.append(new_tc)
@@ -197,27 +197,20 @@ class TestcaseManager:
         printf("Successfully Added!", self.good_color)
 
     def publish(self) -> None:
-        if len(self.changes) == 0:
-            printf("Nothing to Save")
-            return
 
-        printf(
-            f"Changes on Testcase #[{', '.join(map(str, list(self.changes)))}] - Total: {len(self.changes)}")
-        printf("Are You Sure to Save Changes?[Y,y/N]", end="")
-        printf("[It cannot be Undone]", self.warning_color)
-
-        if input().capitalize() == "Y":
-            for tc in self.tc_paths:
+        for tc in self.tc_paths:
+            try:
                 os.remove(f'{self.tc_dir}/{tc}')
-            for answer in self.answer_paths:
+            except:
+                pass
+        for answer in self.answer_paths:
+            try:
                 os.remove(f'{self.answer_dir}/{answer}')
-            for tc in self.testcases:
-                tc.save()
-            printf("Successfully Saved!", self.good_color)
-        else:
-            printf("To preview changes, press [1]")
-
-        self.changes.clear()
+            except:
+                pass
+        for tc in self.testcases:
+            tc.save()
+        printf("Successfully Saved!", self.good_color)
 
     def modify(self) -> None:
         tc_no = input("Enter Testcase # to Modify: ")
@@ -256,6 +249,8 @@ class TestcaseManager:
         self.changes.add(tc_no)
         printf("Successfully Modified!", self.good_color)
 
+        self.publish()
+
     def delete(self) -> None:
         tc_no = input("Enter Testcase # to Delete: ")
         try:
@@ -283,24 +278,19 @@ class TestcaseManager:
             self.changes.add("DELETED")
             printf("Successfully Deleted!", self.good_color)
 
+        self.publish()
+
     def program(self):
         printf("TESTCASE MANAGER".center(self.padding, "="), self.main_color)
         while True:
             try:
                 answer = int(
-                    input(f"[1]Preview [2]Add [3] Modify [4]Save{f'({len(self.changes)} changes)' if len(self.changes) else ""} [5]Delete [6/0]Exit: "))
+                    input(f"[1]Preview [2]Add [3]Modify [4]]Delete [5/0]Exit: "))
             except:
                 printf('_' * self.padding, DEFAULT)
                 continue
 
-            if answer == 0 or answer == 6:
-                if len(self.changes):
-                    ans = input(
-                        f"You have {len(self.changes)} unsaved changes. Exit without saving? [Y,y/N]: ")
-                    if ans.capitalize() == "Y":
-                        return
-                    else:
-                        continue
+            if answer == 0 or answer == 5:
                 return
             elif answer == 1:
                 for tc in self.testcases:
@@ -310,8 +300,6 @@ class TestcaseManager:
             elif answer == 3:
                 self.modify()
             elif answer == 4:
-                self.publish()
-            elif answer == 5:
                 self.delete()
 
             printf('_' * self.padding, DEFAULT)
