@@ -11,7 +11,10 @@ Built for use in **GIST** courses including `GS1401` and `GS2408`.
    3. Answer 디렉토리에 **정답 소스코드 추가(권장)** 또는 2.와 같은 방법으로 추가
    4. 만약 소스코드로 사용한다면, Testcase Manager에서 answer을 건너 뛰어도됨
    5. 파일 이름이 맞지 않다면 제대로 작동하지 않으므로 참고하여 작성할 것.
-2. Grader 실행
+2. Autograder 실행
+   1. 채점 또는 관리하고자 하는 Lab 번호를 매개변수로 하여 프로그램 실행
+      (Lab3를 채점하고자 하면,  `python main.py 3`)
+3. Grader
    1. 저장된 Testcase와 Answer(txt 또는 .cpp)를 바탕으로 채점
    2. grader option으로 point, cpp, -std, method, files 지정 가능
       1. point: 현재 채점하는 Exercise의 배점 (기본: 10점)
@@ -20,7 +23,7 @@ Built for use in **GIST** courses including `GS1401` and `GS2408`.
       4. method: 'exact'- 일반적인 채점, 'any'-제출 후 실행만 되면 정답 (정해진 정답이 없는 경우)
       5. files: 추가 소스파일(main이 있는 파일 제외) (Cars.cpp, Circles.cpp 등 추가 파일)
    3. 가장 마지막에 출력되는 경로로 해당 Exercise의 채점 결과 저장
-3. Lab Score Summary
+4. Lab Score Summary
    1. 한 Lab의 모든 Exercise를 채점했다면, 실행하여 종합 성적을 저장
 
 ---
