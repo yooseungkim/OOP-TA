@@ -1,17 +1,227 @@
 Session #,Student ID,TC1_1,ANS1_1,TC1_2,ANS1_2,TC1_3,ANS1_3,TC1_4,ANS1_4,TC1_5,ANS1_5,Points1
-Lab1,s20215049,X,Enter first number: Enter second number: The sum is: 4,X,Enter first number: Enter second number: The sum is: 7,X,Enter first number: Enter second number: The sum is: 8,X,Enter first number: Enter second number: The sum is: -33144655,X,Enter first number: Enter second number: The sum is: 1,0
-Lab1,s20215047,X,Enter first number: Enter second number: The sum is: 4,X,Enter first number: Enter second number: The sum is: 7,X,Enter first number: Enter second number: The sum is: 8,X,Enter first number: Enter second number: The sum is: -33144655,X,Enter first number: Enter second number: The sum is: 1,0
-Lab1,s20215048,X,Enter first number: Enter second number: The sum is: 4,X,Enter first number: Enter second number: The sum is: 7,X,Enter first number: Enter second number: The sum is: 8,X,Enter first number: Enter second number: The sum is: -33144655,X,Enter first number: Enter second number: The sum is: 1,0
-Lab1,s20215050,X,Enter first number: Enter second number: The sum is: 4,X,Enter first number: Enter second number: The sum is: 7,X,Enter first number: Enter second number: The sum is: 8,X,Enter first number: Enter second number: The sum is: -33144655,X,Enter first number: Enter second number: The sum is: 1,0
-Lab2,s20215052,X,Enter first number: Enter second number: The sum is: 4,X,Enter first number: Enter second number: The sum is: 7,X,Enter first number: Enter second number: The sum is: 8,X,Enter first number: Enter second number: The sum is: -33144655,X,Enter first number: Enter second number: The sum is: 1,0
-Lab2,s20215054,X,Enter first number: Enter second number: The sum is: 4,X,Enter first number: Enter second number: The sum is: 7,X,Enter first number: Enter second number: The sum is: 8,X,Enter first number: Enter second number: The sum is: -33144655,X,Enter first number: Enter second number: The sum is: 1,0
-Lab2,s20215053,X,Enter first number: Enter second number: The sum is: 4,X,Enter first number: Enter second number: The sum is: 7,X,Enter first number: Enter second number: The sum is: 8,X,Enter first number: Enter second number: The sum is: -33144655,X,Enter first number: Enter second number: The sum is: 1,0
-Lab2,s20215051,X,Enter first number: Enter second number: The sum is: 4,X,Enter first number: Enter second number: The sum is: 7,X,Enter first number: Enter second number: The sum is: 8,X,Enter first number: Enter second number: The sum is: -33144655,X,Enter first number: Enter second number: The sum is: 1,0
-Lab3,s20215049,X,Enter first number: Enter second number: The sum is: 4,X,Enter first number: Enter second number: The sum is: 7,X,Enter first number: Enter second number: The sum is: 8,X,Enter first number: Enter second number: The sum is: -33144655,X,Enter first number: Enter second number: The sum is: 1,0
-Lab3,s20215047,X,Enter first number: Enter second number: The sum is: 4,X,Enter first number: Enter second number: The sum is: 7,X,Enter first number: Enter second number: The sum is: 8,X,Enter first number: Enter second number: The sum is: -33144655,X,Enter first number: Enter second number: The sum is: 1,0
-Lab3,s20215048,X,Enter first number: Enter second number: The sum is: 4,X,Enter first number: Enter second number: The sum is: 7,X,Enter first number: Enter second number: The sum is: 8,X,Enter first number: Enter second number: The sum is: -33144655,X,Enter first number: Enter second number: The sum is: 1,0
-Lab3,s20215050,X,Enter first number: Enter second number: The sum is: 4,X,Enter first number: Enter second number: The sum is: 7,X,Enter first number: Enter second number: The sum is: 8,X,Enter first number: Enter second number: The sum is: -33144655,X,Enter first number: Enter second number: The sum is: 1,0
-Lab4,s20215049,X,Enter first number: Enter second number: The sum is: 4,X,Enter first number: Enter second number: The sum is: 7,X,Enter first number: Enter second number: The sum is: 8,X,Enter first number: Enter second number: The sum is: -33144655,X,Enter first number: Enter second number: The sum is: 1,0
-Lab4,s20215047,X,Enter first number: Enter second number: The sum is: 4,X,Enter first number: Enter second number: The sum is: 7,X,Enter first number: Enter second number: The sum is: 8,X,Enter first number: Enter second number: The sum is: -33144655,X,Enter first number: Enter second number: The sum is: 1,0
-Lab4,s20215048,X,Enter first number: Enter second number: The sum is: 4,X,Enter first number: Enter second number: The sum is: 7,X,Enter first number: Enter second number: The sum is: 8,X,Enter first number: Enter second number: The sum is: -33144655,X,Enter first number: Enter second number: The sum is: 1,0
-Lab4,s20215050,X,Enter first number: Enter second number: The sum is: 4,X,Enter first number: Enter second number: The sum is: 7,X,Enter first number: Enter second number: The sum is: 8,X,Enter first number: Enter second number: The sum is: -33144655,X,Enter first number: Enter second number: The sum is: 1,0
+Lab1,s20215049,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10
+Lab1,s20215047,O,"Output monthly balances for one year at .03
+Balances: Saver 1 Savings balance: 2000
+	Saver 2 Savings balance: 3000
+
+Month  1: Saver 1 Savings balance: 2005
+	Saver 2 Savings balance: 3007.5
+
+Month  2: Saver 1 Savings balance: 2010.01
+	Saver 2 Savings balance: 3015.02
+
+Month  3: Saver 1 Savings balance: 2015.04
+	Saver 2 Savings balance: 3022.56
+
+Month  4: Saver 1 Savings balance: 2020.08
+	Saver 2 Savings balance: 3030.11
+
+Month  5: Saver 1 Savings balance: 2025.13
+	Saver 2 Savings balance: 3037.69
+
+Month  6: Saver 1 Savings balance: 2030.19
+	Saver 2 Savings balance: 3045.28
+
+Month  7: Saver 1 Savings balance: 2035.26
+	Saver 2 Savings balance: 3052.9
+
+Month  8: Saver 1 Savings balance: 2040.35
+	Saver 2 Savings balance: 3060.53
+
+Month  9: Saver 1 Savings balance: 2045.45
+	Saver 2 Savings balance: 3068.18
+
+Month 10: Saver 1 Savings balance: 2050.57
+	Saver 2 Savings balance: 3075.85
+
+Month 11: Saver 1 Savings balance: 2055.69
+	Saver 2 Savings balance: 3083.54
+
+Month 12: Saver 1 Savings balance: 2060.83
+	Saver 2 Savings balance: 3091.25
+
+After setting interest rate to .04
+Balances: Saver 1 Savings balance: 2067.7
+	Saver 2 Savings balance: 3101.55",O,"Output monthly balances for one year at .03
+Balances: Saver 1 Savings balance: 2000
+	Saver 2 Savings balance: 3000
+
+Month  1: Saver 1 Savings balance: 2005
+	Saver 2 Savings balance: 3007.5
+
+Month  2: Saver 1 Savings balance: 2010.01
+	Saver 2 Savings balance: 3015.02
+
+Month  3: Saver 1 Savings balance: 2015.04
+	Saver 2 Savings balance: 3022.56
+
+Month  4: Saver 1 Savings balance: 2020.08
+	Saver 2 Savings balance: 3030.11
+
+Month  5: Saver 1 Savings balance: 2025.13
+	Saver 2 Savings balance: 3037.69
+
+Month  6: Saver 1 Savings balance: 2030.19
+	Saver 2 Savings balance: 3045.28
+
+Month  7: Saver 1 Savings balance: 2035.26
+	Saver 2 Savings balance: 3052.9
+
+Month  8: Saver 1 Savings balance: 2040.35
+	Saver 2 Savings balance: 3060.53
+
+Month  9: Saver 1 Savings balance: 2045.45
+	Saver 2 Savings balance: 3068.18
+
+Month 10: Saver 1 Savings balance: 2050.57
+	Saver 2 Savings balance: 3075.85
+
+Month 11: Saver 1 Savings balance: 2055.69
+	Saver 2 Savings balance: 3083.54
+
+Month 12: Saver 1 Savings balance: 2060.83
+	Saver 2 Savings balance: 3091.25
+
+After setting interest rate to .04
+Balances: Saver 1 Savings balance: 2067.7
+	Saver 2 Savings balance: 3101.55",O,"Output monthly balances for one year at .03
+Balances: Saver 1 Savings balance: 2000
+	Saver 2 Savings balance: 3000
+
+Month  1: Saver 1 Savings balance: 2005
+	Saver 2 Savings balance: 3007.5
+
+Month  2: Saver 1 Savings balance: 2010.01
+	Saver 2 Savings balance: 3015.02
+
+Month  3: Saver 1 Savings balance: 2015.04
+	Saver 2 Savings balance: 3022.56
+
+Month  4: Saver 1 Savings balance: 2020.08
+	Saver 2 Savings balance: 3030.11
+
+Month  5: Saver 1 Savings balance: 2025.13
+	Saver 2 Savings balance: 3037.69
+
+Month  6: Saver 1 Savings balance: 2030.19
+	Saver 2 Savings balance: 3045.28
+
+Month  7: Saver 1 Savings balance: 2035.26
+	Saver 2 Savings balance: 3052.9
+
+Month  8: Saver 1 Savings balance: 2040.35
+	Saver 2 Savings balance: 3060.53
+
+Month  9: Saver 1 Savings balance: 2045.45
+	Saver 2 Savings balance: 3068.18
+
+Month 10: Saver 1 Savings balance: 2050.57
+	Saver 2 Savings balance: 3075.85
+
+Month 11: Saver 1 Savings balance: 2055.69
+	Saver 2 Savings balance: 3083.54
+
+Month 12: Saver 1 Savings balance: 2060.83
+	Saver 2 Savings balance: 3091.25
+
+After setting interest rate to .04
+Balances: Saver 1 Savings balance: 2067.7
+	Saver 2 Savings balance: 3101.55",O,"Output monthly balances for one year at .03
+Balances: Saver 1 Savings balance: 2000
+	Saver 2 Savings balance: 3000
+
+Month  1: Saver 1 Savings balance: 2005
+	Saver 2 Savings balance: 3007.5
+
+Month  2: Saver 1 Savings balance: 2010.01
+	Saver 2 Savings balance: 3015.02
+
+Month  3: Saver 1 Savings balance: 2015.04
+	Saver 2 Savings balance: 3022.56
+
+Month  4: Saver 1 Savings balance: 2020.08
+	Saver 2 Savings balance: 3030.11
+
+Month  5: Saver 1 Savings balance: 2025.13
+	Saver 2 Savings balance: 3037.69
+
+Month  6: Saver 1 Savings balance: 2030.19
+	Saver 2 Savings balance: 3045.28
+
+Month  7: Saver 1 Savings balance: 2035.26
+	Saver 2 Savings balance: 3052.9
+
+Month  8: Saver 1 Savings balance: 2040.35
+	Saver 2 Savings balance: 3060.53
+
+Month  9: Saver 1 Savings balance: 2045.45
+	Saver 2 Savings balance: 3068.18
+
+Month 10: Saver 1 Savings balance: 2050.57
+	Saver 2 Savings balance: 3075.85
+
+Month 11: Saver 1 Savings balance: 2055.69
+	Saver 2 Savings balance: 3083.54
+
+Month 12: Saver 1 Savings balance: 2060.83
+	Saver 2 Savings balance: 3091.25
+
+After setting interest rate to .04
+Balances: Saver 1 Savings balance: 2067.7
+	Saver 2 Savings balance: 3101.55",O,"Output monthly balances for one year at .03
+Balances: Saver 1 Savings balance: 2000
+	Saver 2 Savings balance: 3000
+
+Month  1: Saver 1 Savings balance: 2005
+	Saver 2 Savings balance: 3007.5
+
+Month  2: Saver 1 Savings balance: 2010.01
+	Saver 2 Savings balance: 3015.02
+
+Month  3: Saver 1 Savings balance: 2015.04
+	Saver 2 Savings balance: 3022.56
+
+Month  4: Saver 1 Savings balance: 2020.08
+	Saver 2 Savings balance: 3030.11
+
+Month  5: Saver 1 Savings balance: 2025.13
+	Saver 2 Savings balance: 3037.69
+
+Month  6: Saver 1 Savings balance: 2030.19
+	Saver 2 Savings balance: 3045.28
+
+Month  7: Saver 1 Savings balance: 2035.26
+	Saver 2 Savings balance: 3052.9
+
+Month  8: Saver 1 Savings balance: 2040.35
+	Saver 2 Savings balance: 3060.53
+
+Month  9: Saver 1 Savings balance: 2045.45
+	Saver 2 Savings balance: 3068.18
+
+Month 10: Saver 1 Savings balance: 2050.57
+	Saver 2 Savings balance: 3075.85
+
+Month 11: Saver 1 Savings balance: 2055.69
+	Saver 2 Savings balance: 3083.54
+
+Month 12: Saver 1 Savings balance: 2060.83
+	Saver 2 Savings balance: 3091.25
+
+After setting interest rate to .04
+Balances: Saver 1 Savings balance: 2067.7
+	Saver 2 Savings balance: 3101.55",10
+Lab1,s20215048,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10
+Lab1,s20215050,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10
+Lab2,s20215052,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10
+Lab2,s20215054,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10
+Lab2,s20215053,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10
+Lab2,s20215051,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10
+Lab3,s20215049,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10
+Lab3,s20215047,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10
+Lab3,s20215048,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10
+Lab3,s20215050,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10
+Lab4,s20215049,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10
+Lab4,s20215047,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10
+Lab4,s20215048,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10
+Lab4,s20215050,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10

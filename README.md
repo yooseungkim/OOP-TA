@@ -105,7 +105,7 @@ After launching:
 
 ---
 
-### 3️⃣Menu Options for Testcase Manager
+### 3️⃣ Menu Options for Testcase Manager
 
 After selecting `[1]Testcase`
 
@@ -123,9 +123,9 @@ After selecting `[1]Testcase`
 
 First, grade for each exercise with `[2] Ex Grader`
 
-You can set grading options, including points for this exercise (default 10), complier, language standard, recompilation. 
+You can set grading options, including points for this exercise (default 10), complier, language standard, recompilation.
 
-After grading all exercises, make summary with `[3] Lab Score Summary` 
+After grading all exercises, make summary with `[3] Lab Score Summary`
 
 ### 🧪 Testcase Naming Format
 
@@ -141,7 +141,7 @@ Example for Lab 1, Exercise 2, Testcase 3:
 
 You can manually create testcases by adding new files in testcase and answer directories. In this case, make sure you follow the naming format and directory.
 
-Unless input and ouptut are very long, creating testcases in CLI testcase manager is recommended.
+Creating testcases in CLI testcase manager is recommended only if testcase input/output are simple. 
 
 ---
 

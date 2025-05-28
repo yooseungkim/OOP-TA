@@ -70,8 +70,8 @@ class Testcase:
         return ""
 
     def preview(self) -> None:
-        tc = '\n' + self.input if '\n' in self.input else self.input
-        answer = '\n' + self.output if '\n' in self.output else self.output
+        tc = self.input.replace('\n', '\n\t  ')
+        answer = self.output.replace('\n', '\n\t  ')
         printf(
             f"LAB{self.lab} EX{self.ex}-{self.tc_no}".center(self.padding, "-"), DEFAULT)
         printf(f"{self.main_color}TESTCASE{DEFAULT}: {tc if tc else 'No Input'}")
@@ -323,6 +323,7 @@ class Grader:
         self.error_color = error_color
         self.warning_color = warning_color
         self.points = 10
+        self.method = 'exact'
         self.recompile = recompile
         self.std = 'c++11' if cpp else 'c11'
         self.TCManager = TestcaseManager(
@@ -395,12 +396,29 @@ class Grader:
                             f"    RUNTIME ERROR: {output.stderror}", self.error_color)
                         result += ['X', "Runtime Error"]
 
-                    if output.stdout.strip() == ans.strip():
-                        # printf("    CORRECT", self.good_color)
+                    if self.method == 'exact' and output.stdout.strip() == ans.strip():
                         result += ['O', output.stdout.strip()]
+
+                    elif self.method == 'keyword' and len(list(filter(lambda x: x in output.stdout.strip(), ans.strip().split('\n')))) == len(ans.strip().split('\n')):
+                        # if every keyword in answer are in output
+                        result += ['O', output.stdout.strip()]
+
+                    elif self.method == 'any':
+                        result += ['O', output.stdout.strip()]
+
                     else:
+                        output_msg = output.stdout.strip().replace(
+                            '\n', f'{YELLOW}/{self.error_color}') if output.stdout else 'ø'
+                        exp_msg = ans.strip().replace(
+                            '\n', f'{YELLOW}/{DEFAULT}') if ans else 'ø'
+
+                        output_msg = output_msg[:self.padding] + \
+                            '...' if len(
+                                output_msg) > self.padding else output_msg
+                        exp_msg = exp_msg[:self.padding] + \
+                            '...' if len(exp_msg) > self.padding else exp_msg
                         printf(
-                            f"    {self.error_color}[{self.ex}-{k+1}] RESULT: {output.stdout.strip().replace('\n', f'{YELLOW}/{self.error_color}') if output.stdout else 'ø'} {DEFAULT}<-> EXPECTED: {ans.strip().replace('\n', f'{YELLOW}/{DEFAULT}') if ans else 'ø'}")
+                            f"    {self.error_color}[{self.ex}-{k+1}] RESULT: {output_msg}{DEFAULT}<-> EXPECTED: {exp_msg}")
                         result += ['X', output.stdout.strip()]
                         correct = False
                 if correct:
@@ -432,11 +450,11 @@ class Grader:
         return
 
     def show_grade_ops(self):
-        printf(f"Points: {self.main_color}{self.points}{DEFAULT}, Compiler: {self.alt_color}{"g++" if self.cpp else "gcc"}{DEFAULT}, C/C++: {self.alt_color}-std={self.std}{DEFAULT}, Recompile: {self.alt_color}{self.recompile}")
+        printf(f"Points: {self.main_color}{self.points}{DEFAULT}, Compiler: {self.alt_color}{'g++' if self.cpp else 'gcc'}{DEFAULT}, C/C++: {self.alt_color}-std={self.std}{DEFAULT}, Recompile: {self.alt_color}{self.recompile}{DEFAULT}, Method: {self.alt_color}{self.method}")
 
     def set_grade_opts(self):
         printf(
-            f"Enter options separated by comma, e.g. {self.main_color}'points=#, compiler=gcc, -std=c11, recompile=false'")
+            f"Enter options separated by comma, e.g. {self.main_color}'points=#, compiler=gcc, -std=c11, recompile=false, method=keyword/exact/any'")
         try:
             answer = input(
                 "Case INsensitive, may omit options to use default: ").split(',')
@@ -462,6 +480,13 @@ class Grader:
             if (self.cpp and "++" not in self.std) or (not self.cpp and "++" in self.std):
                 printf(
                     f"Compiler({'g++' if self.cpp else 'gcc'}) and C/C++ standard(-std={self.std}) does not match", self.warning_color)
+
+            if 'method' in opts.keys():
+                if opts['method'].lower() in ['keyword', 'exact', 'any']:
+                    self.method = opts['method'].lower()
+                else:
+                    printf("Choose grading method among 'keyword', 'exact', 'any'")
+
         except:
             if len(answer) == 0:
                 return
