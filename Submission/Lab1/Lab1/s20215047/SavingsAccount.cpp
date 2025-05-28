@@ -1,4 +1,4 @@
-#include "ex1_1_savingsaccount.h"
+#include "SavingsAccount.h"
 
 double SavingsAccount::annualInterestRate;
 

@@ -3,6 +3,26 @@
 A Python-based **autograding tool** for programming assignments in **C/C++**, designed to manage testcases, compile and run student submissions, and export results to CSV.
 Built for use in **GIST** courses including `GS1401` and `GS2408`.
 
+## 요약
+
+1. 파일 구조에 맞게 재배치 (Directory Structure 참고)
+   1. cse 서버에서 학생 제출 파일 가지고오기
+   2. Testcase 디렉토리에 txt파일 추가 또는 Grader 실행 후 Testcase Manager로 testcase 추가
+   3. Answer 디렉토리에 **정답 소스코드 추가(권장)** 또는 2.와 같은 방법으로 추가
+   4. 만약 소스코드로 사용한다면, Testcase Manager에서 answer을 건너 뛰어도됨
+   5. 파일 이름이 맞지 않다면 제대로 작동하지 않으므로 참고하여 작성할 것.
+2. Grader 실행
+   1. 저장된 Testcase와 Answer(txt 또는 .cpp)를 바탕으로 채점
+   2. grader option으로 point, cpp, -std, method, files 지정 가능
+      1. point: 현재 채점하는 Exercise의 배점 (기본: 10점)
+      2. cpp: cpp 또는 c로 컴파일. (g++  / gcc)
+      3. -std: language standard 설정 (몇몇 경우에 c++11, c++99 등으로 설정해주어야 오류가 나지 않는 경우가 있음)
+      4. method: 'exact'- 일반적인 채점, 'any'-제출 후 실행만 되면 정답 (정해진 정답이 없는 경우)
+      5. files: 추가 소스파일(main이 있는 파일 제외) (Cars.cpp, Circles.cpp 등 추가 파일)
+   3. 가장 마지막에 출력되는 경로로 해당 Exercise의 채점 결과 저장
+3. Lab Score Summary
+   1. 한 Lab의 모든 Exercise를 채점했다면, 실행하여 종합 성적을 저장
+
 ---
 
 ## 📦 Features
@@ -31,7 +51,8 @@ Built for use in **GIST** courses including `GS1401` and `GS2408`.
 ├── main.py              # This autograder file
 ├── Submission/       # Contains Lab submission folders per session
 │   └── Lab1/         # Lab#
-│       ├── Answer/      # Stores answer files (exX_Y.txt) 
+│       ├── Answer/      # Stores answer files (exX_Y.cpp or exX_Y.txt) 
+│       │   ├─ ex1_1.cpp # [Recommended, will update other answer files with corresponding testcase files 
 │       │   ├─ ex1_1.txt
 │       │   └─ ex1_2.txt
 │       ├── Testcase/    # Stores testcase input files
@@ -129,10 +150,10 @@ After grading all exercises, make summary with `[3] Lab Score Summary`
 
 ### 🧪 Testcase Naming Format
 
-| File Type | Format                    |
-| --------- | ------------------------- |
-| Input     | `ex<lab>_<ex>_<tc>.txt` |
-| Answer    | `ex<lab>_<ex>_<tc>.txt` |
+| File Type | Format                          |
+| --------- | ------------------------------- |
+| Input     | `ex<lab>_<ex>_<tc>.txt`       |
+| Answer    | `ex<lab>_<ex>_<tc>.cpp / txt` |
 
 Example for Lab 1, Exercise 2, Testcase 3:
 
@@ -141,7 +162,11 @@ Example for Lab 1, Exercise 2, Testcase 3:
 
 You can manually create testcases by adding new files in testcase and answer directories. In this case, make sure you follow the naming format and directory.
 
-Creating testcases in CLI testcase manager is recommended only if testcase input/output are simple. 
+**Recommended to add source file (.cpp/.c) as an answer file instead of .txt.**
+
+Grader will use this source file and its output for grading.
+
+If you're using source file, answer txt file only exists for checking its output. (Not used for grading)
 
 ---
 

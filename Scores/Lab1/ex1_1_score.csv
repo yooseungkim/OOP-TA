@@ -1,6 +1,6 @@
 Session #,Student ID,TC1_1,ANS1_1,TC1_2,ANS1_2,TC1_3,ANS1_3,TC1_4,ANS1_4,TC1_5,ANS1_5,Points1
-Lab1,s20215049,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10
-Lab1,s20215047,O,"Output monthly balances for one year at .03
+Lab1,s20215049,X,No Submission,X,No Submission,X,No Submission,X,No Submission,X,No Submission,0
+Lab1,s20215047,X,"Output monthly balances for one year at .03
 Balances: Saver 1 Savings balance: 2000
 	Saver 2 Savings balance: 3000
 
@@ -42,7 +42,7 @@ Month 12: Saver 1 Savings balance: 2060.83
 
 After setting interest rate to .04
 Balances: Saver 1 Savings balance: 2067.7
-	Saver 2 Savings balance: 3101.55",O,"Output monthly balances for one year at .03
+	Saver 2 Savings balance: 3101.55",X,"Output monthly balances for one year at .03
 Balances: Saver 1 Savings balance: 2000
 	Saver 2 Savings balance: 3000
 
@@ -84,7 +84,7 @@ Month 12: Saver 1 Savings balance: 2060.83
 
 After setting interest rate to .04
 Balances: Saver 1 Savings balance: 2067.7
-	Saver 2 Savings balance: 3101.55",O,"Output monthly balances for one year at .03
+	Saver 2 Savings balance: 3101.55",X,"Output monthly balances for one year at .03
 Balances: Saver 1 Savings balance: 2000
 	Saver 2 Savings balance: 3000
 
@@ -126,7 +126,7 @@ Month 12: Saver 1 Savings balance: 2060.83
 
 After setting interest rate to .04
 Balances: Saver 1 Savings balance: 2067.7
-	Saver 2 Savings balance: 3101.55",O,"Output monthly balances for one year at .03
+	Saver 2 Savings balance: 3101.55",X,"Output monthly balances for one year at .03
 Balances: Saver 1 Savings balance: 2000
 	Saver 2 Savings balance: 3000
 
@@ -168,7 +168,7 @@ Month 12: Saver 1 Savings balance: 2060.83
 
 After setting interest rate to .04
 Balances: Saver 1 Savings balance: 2067.7
-	Saver 2 Savings balance: 3101.55",O,"Output monthly balances for one year at .03
+	Saver 2 Savings balance: 3101.55",X,"Output monthly balances for one year at .03
 Balances: Saver 1 Savings balance: 2000
 	Saver 2 Savings balance: 3000
 
@@ -210,18 +210,18 @@ Month 12: Saver 1 Savings balance: 2060.83
 
 After setting interest rate to .04
 Balances: Saver 1 Savings balance: 2067.7
-	Saver 2 Savings balance: 3101.55",10
-Lab1,s20215048,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10
-Lab1,s20215050,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10
-Lab2,s20215052,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10
-Lab2,s20215054,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10
-Lab2,s20215053,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10
-Lab2,s20215051,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10
-Lab3,s20215049,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10
-Lab3,s20215047,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10
-Lab3,s20215048,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10
-Lab3,s20215050,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10
-Lab4,s20215049,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10
-Lab4,s20215047,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10
-Lab4,s20215048,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10
-Lab4,s20215050,O,Enter first number: Enter second number: The sum is: 4,O,Enter first number: Enter second number: The sum is: 7,O,Enter first number: Enter second number: The sum is: 8,O,Enter first number: Enter second number: The sum is: 199999666,O,Enter first number: Enter second number: The sum is: 1,10
+	Saver 2 Savings balance: 3101.55",0
+Lab1,s20215048,X,No Submission,X,No Submission,X,No Submission,X,No Submission,X,No Submission,0
+Lab1,s20215050,X,No Submission,X,No Submission,X,No Submission,X,No Submission,X,No Submission,0
+Lab2,s20215052,X,No Submission,X,No Submission,X,No Submission,X,No Submission,X,No Submission,0
+Lab2,s20215054,X,No Submission,X,No Submission,X,No Submission,X,No Submission,X,No Submission,0
+Lab2,s20215053,X,No Submission,X,No Submission,X,No Submission,X,No Submission,X,No Submission,0
+Lab2,s20215051,X,No Submission,X,No Submission,X,No Submission,X,No Submission,X,No Submission,0
+Lab3,s20215049,X,No Submission,X,No Submission,X,No Submission,X,No Submission,X,No Submission,0
+Lab3,s20215047,X,No Submission,X,No Submission,X,No Submission,X,No Submission,X,No Submission,0
+Lab3,s20215048,X,No Submission,X,No Submission,X,No Submission,X,No Submission,X,No Submission,0
+Lab3,s20215050,X,No Submission,X,No Submission,X,No Submission,X,No Submission,X,No Submission,0
+Lab4,s20215049,X,No Submission,X,No Submission,X,No Submission,X,No Submission,X,No Submission,0
+Lab4,s20215047,X,No Submission,X,No Submission,X,No Submission,X,No Submission,X,No Submission,0
+Lab4,s20215048,X,No Submission,X,No Submission,X,No Submission,X,No Submission,X,No Submission,0
+Lab4,s20215050,X,No Submission,X,No Submission,X,No Submission,X,No Submission,X,No Submission,0

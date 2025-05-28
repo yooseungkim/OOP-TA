@@ -1,1 +1,1 @@
-7
+Enter first number: Enter second number: The sum is: 7

@@ -326,6 +326,8 @@ class Grader:
         self.method = 'exact'
         self.recompile = recompile
         self.std = 'c++11' if cpp else 'c11'
+        self.source_code = f"{answer_dir}/ex{lab}_{ex}"
+        self.files = None
         self.TCManager = TestcaseManager(
             self.lab, self.ex, self.tc_dir, self.answer_dir, start=False, padding=self.padding)
         printf("AUTOGRADER".center(self.padding, "="), self.main_color)
@@ -350,7 +352,31 @@ class Grader:
         compiler = "g++" if self.cpp else "gcc"
         scores = []
         testcases = []
+        source_code = True
+        # Compile
+        try:
+            if os.path.isfile(f"{self.source_code}{ext}"):
+                printf("Grading with Answer Source File")
+                subprocess.run(
+                    f"{compiler} -std={self.std} {self.source_code}*{ext} -o {self.source_code}", shell=True, capture_output=True, check=True, text=True)
+            else:
+                printf("Grading with Answer Text File")
+                source_code = False
+        except:
+            printf("Compile Error on answer source file",
+                   self.error_color)
+            return
+
         for tc in self.TCManager.testcases:
+            if source_code:
+                try:
+                    tc.output = subprocess.run(
+                        [f'{self.source_code}'], input=tc.input, capture_output=True, shell=True, text=True).stdout.strip()
+                    tc.save()
+                except:
+                    printf(f"[{self.ex}-{tc.tc_no}]Runtime Error on answer source file",
+                           self.error_color)
+                    return
             testcases.append((tc.input, tc.output))
 
         for lab_dir in os.listdir(self.submission_dir):
@@ -377,9 +403,13 @@ class Grader:
                         continue
 
                     # Compile
+                    additional_files = [
+                        f"{student_path}/{x}" for x in self.files]
+                    additional_files = ' '.join(
+                        additional_files) if additional_files else ''
                     try:
                         subprocess.run(
-                            f"{compiler} -std={self.std} {compile_path}*{ext} -o {compile_path}", shell=True, capture_output=True, check=True, text=True)
+                            f"{compiler} -std={self.std} {compile_path}*{ext} {additional_files} -o {compile_path}", shell=True, capture_output=True, check=True, text=True)
                     except:
                         printf("    COMPILE ERROR", self.error_color)
                         result += ['X', 'No Submission'] * self.tc_no + [0]
@@ -397,10 +427,6 @@ class Grader:
                         result += ['X', "Runtime Error"]
 
                     if self.method == 'exact' and output.stdout.strip() == ans.strip():
-                        result += ['O', output.stdout.strip()]
-
-                    elif self.method == 'keyword' and len(list(filter(lambda x: x in output.stdout.strip(), ans.strip().split('\n')))) == len(ans.strip().split('\n')):
-                        # if every keyword in answer are in output
                         result += ['O', output.stdout.strip()]
 
                     elif self.method == 'any':
@@ -450,47 +476,55 @@ class Grader:
         return
 
     def show_grade_ops(self):
-        printf(f"Points: {self.main_color}{self.points}{DEFAULT}, Compiler: {self.alt_color}{'g++' if self.cpp else 'gcc'}{DEFAULT}, C/C++: {self.alt_color}-std={self.std}{DEFAULT}, Recompile: {self.alt_color}{self.recompile}{DEFAULT}, Method: {self.alt_color}{self.method}")
+        printf(f"Points: {self.main_color}{self.points}{DEFAULT}, Compiler: {self.alt_color}{'g++' if self.cpp else 'gcc'}{DEFAULT}, C/C++: {self.alt_color}-std={self.std}{DEFAULT}, Recompile: {self.alt_color}{self.recompile}{DEFAULT}, Method: {self.alt_color}{self.method}{DEFAULT}, Files: {self.alt_color}{self.files}")
 
     def set_grade_opts(self):
         printf(
-            f"Enter options separated by comma, e.g. {self.main_color}'points=#, compiler=gcc, -std=c11, recompile=false, method=keyword/exact/any'")
+            f"Enter options separated by comma, e.g. {self.main_color}'points=#, compiler=gcc, -std=c11, recompile=false, method=exact/any', files=Car.cpp Engine.cpp")
         try:
             answer = input(
-                "Case INsensitive, may omit options to use default: ").split(',')
+                "You may omit options to use default: ").split(',')
 
             opts = dict(arg.split("=") for arg in answer)
+            for k, v in opts.items():
+                k = k.strip()
+                v = v.strip()
+                if "points" == k:
+                    self.points = int(v)
 
-            if "points" in opts.keys():
-                self.points = int(opts["points"])
-            if "compiler" in opts.keys():
-                self.cpp = False if opts['compiler'].strip(
-                ).lower() == "gcc" else True
-                if self.cpp:
-                    self.std = 'c++11'
-                else:
-                    self.std = 'c11'
-            if "recompile" in opts.keys():
-                self.recompile = False if opts['recompile'].strip(
-                ).lower() == "false" else True
+                if "compiler" == k:
+                    self.cpp = False if v.strip(
+                    ).lower() == "gcc" else True
+                    if self.cpp:
+                        self.std = 'c++11'
+                    else:
+                        self.std = 'c11'
 
-            if "-std" in opts.keys() or 'std' in opts.keys():
-                self.std = opts.get('-std', opts.get('std', "c++11"))
+                if "recompile" == k:
+                    self.recompile = False if v.strip(
+                    ).lower() == "false" else True
 
-            if (self.cpp and "++" not in self.std) or (not self.cpp and "++" in self.std):
-                printf(
-                    f"Compiler({'g++' if self.cpp else 'gcc'}) and C/C++ standard(-std={self.std}) does not match", self.warning_color)
+                if "-std" == k or 'std' == k:
+                    self.std = v
 
-            if 'method' in opts.keys():
-                if opts['method'].lower() in ['keyword', 'exact', 'any']:
-                    self.method = opts['method'].lower()
-                else:
-                    printf("Choose grading method among 'keyword', 'exact', 'any'")
+                if (self.cpp and "++" not in self.std) or (not self.cpp and "++" in self.std):
+                    printf(
+                        f"Compiler({'g++' if self.cpp else 'gcc'}) and C/C++ standard(-std={self.std}) does not match", self.warning_color)
 
+                if 'method' == k:
+                    if v.lower() in ['exact', 'any']:
+                        self.method = v.lower()
+                    else:
+                        printf(
+                            "Choose grading method among 'keyword', 'exact', 'any'")
+
+                if 'files' == k:
+                    self.files = v.split()
         except:
             if len(answer) == 0:
                 return
             printf("Invalid Input", self.error_color)
+        print()
         return
 
 

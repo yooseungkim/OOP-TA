@@ -6,7 +6,7 @@ using std::endl;
 
 using std::setw;
 
-#include "ex1_1_savingsaccount.h"
+#include "SavingsAccount.h"
 
 int main()
 {
