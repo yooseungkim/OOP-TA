@@ -285,7 +285,7 @@ class TestcaseManager:
         while True:
             try:
                 answer = int(
-                    input(f"[1]Preview [2]Add [3]Modify [4]]Delete [5/0]Exit: "))
+                    input(f"[1]Preview [2]Add [3]Modify [4]Delete [5/0]Exit: "))
             except:
                 printf('_' * self.padding, DEFAULT)
                 continue
@@ -323,7 +323,7 @@ class Grader:
         self.error_color = error_color
         self.warning_color = warning_color
         self.points = 10
-        self.method = 'exact'
+        self.method = 'any'
         self.recompile = recompile
         self.std = 'c++11' if cpp else 'c11'
         self.source_code = f"{answer_dir}/ex{lab}_{ex}"
@@ -395,6 +395,7 @@ class Grader:
 
                 if self.recompile or not os.path.isfile(compile_path):
                     # Check Submission (cpp file)
+                    print(compile_path + ext, os.path.isfile(compile_path + ext))
                     if not os.path.isfile(compile_path + ext):
                         printf(
                             f"    NO SUBMISSION for ex{self.lab}_{self.ex}", self.error_color)
@@ -403,10 +404,12 @@ class Grader:
                         continue
 
                     # Compile
-                    additional_files = [
-                        f"{student_path}/{x}" for x in self.files]
-                    additional_files = ' '.join(
-                        additional_files) if additional_files else ''
+                    additional_files = None
+                    if self.files:
+                        additional_files = [
+                            f"{student_path}/{x}" for x in self.files]
+                        additional_files = ' '.join(
+                            additional_files) if additional_files else ''
                     try:
                         subprocess.run(
                             f"{compiler} -std={self.std} {compile_path}*{ext} {additional_files} -o {compile_path}", shell=True, capture_output=True, check=True, text=True)
@@ -423,14 +426,22 @@ class Grader:
 
                     if output.stderr != "":
                         printf(
-                            f"    RUNTIME ERROR: {output.stderror}", self.error_color)
+                            f"    RUNTIME ERROR: {output.stderr}", self.error_color)
                         result += ['X', "Runtime Error"]
 
                     if self.method == 'exact' and output.stdout.strip() == ans.strip():
-                        result += ['O', output.stdout.strip()]
+                        if 'LATE' in compile_path:
+                            result += ['O(LATE)', output.stdout.strip()]
+                            self.points = self.points - 2
+                        else:
+                            result += ['O', output.stdout.strip()]
 
                     elif self.method == 'any':
-                        result += ['O', output.stdout.strip()]
+                        if 'LATE' in compile_path:
+                            result += ['O(LATE)', output.stdout.strip()]
+                            self.points = self.points - 2
+                        else:
+                            result += ['O', output.stdout.strip()]
 
                     else:
                         output_msg = output.stdout.strip().replace(
