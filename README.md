@@ -1,30 +1,130 @@
-# 📚 GIST Autograder System
+## Gemini said
 
-A Python & Streamlit-based **autograding tool** for programming assignments in **C/C++**. Designed for **GIST** courses (e.g., `GS1401`, `GS2408`) to manage testcases, compile/run student submissions, and export results interactively via Web GUI.
+# 📚 GIST Autograder System (Web GUI) User Manual
+
+GIST C/C++ 프로그래밍 과제(GS1401, GS2408 등)를 효율적으로 채점하고 관리하기 위해 개발된 Web GUI 기반 자동 채점 시스템입니다. `Streamlit` 프레임워크를 사용하여 직관적인 인터페이스를 제공하며, 복잡한 예외 상황(지각, 무한 루프, 포맷 불일치 등)을 Robust하게 처리합니다.
 
 ---
 
-## 🛠️ How to Run
+## 🚀 Getting Started
 
-- Python 3.7+
-- `streamlit`
-- `pandas`
-- C/C++ Compiler (`g++` or `gcc`)
+### 1. Dependencies 설치
 
-```bash
-# 필수 파이썬 패키지 설치
+Python 3.7 이상의 환경에서 아래 명령어를 통해 필수 패키지를 설치합니다.
+
+**Bash**
+
+```
 pip install streamlit pandas
 ```
 
-## 🌟 Key Features
+### 2. 프로그램 실행
 
-- ✅ **Web-based GUI:** Streamlit을 활용한 직관적인 대화형 인터페이스.
-- ✅ **Advanced Evaluation Metrics:** - `numeric`: 출력 텍스트 안에서 숫자(소수점/음수 포함)만 추출해 정답 부분 수열(Subsequence) 일치 여부 확인.
-  - `contains`: 정답의 단어들이 학생 출력에 순서대로 포함되어 있는지 확인.
-  - `exact`, `any` 등 다양한 채점 방식 지원.
-- ✅ **Rubric-based Penalty System:** - `Major Mistake`: 정답 불일치 또는 런타임 에러 시 **-4점**.
-  - `Constraint`: 필수 키워드/함수명 누락 또는 금지어 사용 시 **-2점**.
-  - `Late`: 파일명에 `LATE` 포함 시 **-2점**.
-- ✅ **Session-Specific Testcases:** 분반(Session)별로 문제가 다를 경우, 특정 분반(예: `lab1_1`) 전용 테스트케이스 적용 가능.
-- ✅ **Multi-file Compilation:** 메인 코드 외에 `Car.cpp`, `Student.cpp` 등 다중 소스 파일 동시 컴파일 지원.
-- ✅ **Lab Score Summary:** 개별 Exercise 채점 결과들을 묶어 Lab 전체의 종합 점수(Total Points) CSV로 자동 병합.
+터미널에서 `app.py`가 위치한 디렉토리로 이동한 후, 아래 명령어를 실행하여 웹 서버를 구동합니다.
+
+**Bash**
+
+```
+streamlit run app.py
+```
+
+> **주의:** `python app.py`로 실행하면 웹 브라우저가 열리지 않으며 정상 작동하지 않습니다.
+
+---
+
+## 📁 Directory Structure
+
+시스템이 정상적으로 작동하기 위해서는 **Base Directory** 내부에 아래와 같은 파일 구조가 엄격하게 유지되어야 합니다.
+
+**Plaintext**
+
+```
+Base_Directory/
+├── app.py               # 메인 실행 파일
+├── Submission/          # 학생들의 제출물이 모이는 최상위 폴더
+│   └── Lab1/            # Lab 번호별 폴더
+│       ├── Answer/      # [권장] 정답 소스코드(.cpp) 및 테스트케이스 정답(.txt) 저장
+│       ├── Testcase/    # 테스트케이스 입력값(.txt) 저장
+│       ├── lab1_1/      # 분반 (Session) 이름 폴더
+│       │    ├── s20215047/     # 학번 폴더
+│       │    │   ├── ex1_1.cpp
+│       │    │   ├── LATE_ex1_2.cpp  # 파일명에 LATE가 있으면 자동 지각 감점
+│       │    │   └── Car.cpp         # 추가 소스 파일
+│       │    └── s20215048/
+│       └── lab1_2/      # 다른 분반 폴더
+└── Scores/              # 채점 완료 후 CSV 결과가 자동 저장되는 폴더
+    └── Lab1/
+        ├── ex1_1_score.csv      # 개별 문제 채점 결과
+        └── Lab1_Summary.csv     # Lab 전체 종합 성적표
+```
+
+---
+
+## 🖥️ User Manual (기능 상세 가이드)
+
+### 탭 1. Grader (자동 채점기)
+
+학생들의 코드를 일괄 컴파일하고 채점합니다. 사이드바(Sidebar)에서 옵션을 설정하고 `Run Grader 🚀` 버튼을 클릭하세요.
+
+#### ⚙️ 채점 및 컴파일 옵션 (Grading & Compiler Options)
+
+| Option               | Description                                                                                                                         |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| **Lab Num / Ex Num** | 채점할 Lab 번호와 Exercise 번호를 지정합니다.                                                                                       |
+| **Points**           | 해당 문제의 만점 배점을 지정합니다. (기본: 5점)                                                                                     |
+| **Compiler**         | `g++` (C++) 또는 `gcc` (C) 컴파일러를 선택합니다.                                                                                   |
+| **-std**             | Language standard를 지정합니다. (예:`c++11`, `c++17`, `c11`)                                                                        |
+| **Additional Files** | 객체지향 과제 등에서 main 파일 외에 같이 컴파일해야 하는 파일이 있을 경우 확장자를 포함하여 기재합니다. (예:`Car.cpp, Student.cpp`) |
+| **Force Recompile**  | 체크 시 기존에 컴파일된 바이너리 파일(`.bin`)을 무시하고 무조건 소스 코드를 다시 컴파일합니다.                                      |
+
+#### 📏 평가 기준 (Evaluation Metric)
+
+| Metric       | 동작 방식                                                                                                                                        | 추천 사용처                                                                    |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
+| **exact**    | (공백 정규화 후) 학생 출력과 정답이**완벽히 일치**해야 정답 처리                                                                                 | 엄격한 포맷팅이 요구되는 출력 문제                                             |
+| **numeric**  | 출력 텍스트 안에서 **숫자(음수, 소수점 포함)**만 추출하여, 정답 숫자 배열이 학생 출력 안에 **부분 수열(Subsequence)**로 순서대로 존재하는지 확인 | `Enter a number:` 등 프롬프트 텍스트가 섞여서 출력되는 일반적인 계산/로직 문제 |
+| **contains** | 정답의 모든 단어가 학생 출력 안에 부분 수열로 존재하는지 확인                                                                                    | 텍스트 기반 결과물을 출력하는 문제                                             |
+| **any**      | 출력값과 무관하게 프로그램이 런타임 에러(Crash) 없이 **정상 종료(return 0)** 되기만 하면 정답 처리                                               | 정해진 정답 포맷이 없는 자유 구현 문제                                         |
+
+#### 🚨 감점 시스템 (Cumulative Penalty System)
+
+입력하신 Source Code Rules와 채점 결과에 따라 **누적 감점**이 적용되며, 최하점은 0점으로 고정됩니다.
+
+| 구분              | 감점 폭  | 트리거 조건                                                             | Status 표기                       |
+| :---------------- | :------- | :---------------------------------------------------------------------- | :-------------------------------- |
+| **No Submission** | 0점      | 제출 파일이 없거나 컴파일 에러 발생                                     | `No Submission` / `Compile Error` |
+| **Major Mistake** | **-4점** | 정답과 결과값이 다르거나(오답), 런타임 에러(Segmentation fault 등) 발생 | `Major Mistake(-4)`               |
+| **Constraint**    | **-2점** | `Required Keywords` 누락 또는 `Forbidden Keywords` 사용                 | `Constraint(-2)`                  |
+| **Late**          | **-2점** | 파일명에 `LATE` 키워드 포함                                             | `Late(-2)`                        |
+
+---
+
+### 탭 2. Testcase Manager (테스트케이스 관리자)
+
+텍스트 파일 구조를 직접 만질 필요 없이, GUI에서 테스트케이스를 생성하고 저장할 수 있습니다.
+
+- **[Optional] 정답 소스 코드 연동법:**
+  `Testcase Input (STDIN)` 영역에만 값을 입력하고 저장하세요. 만약 `Answer` 폴더 안에 교수님/조교님의 모범 답안 소스 코드(예: `ex1_1.cpp`)가 들어있다면, **채점기가 실행될 때 이 소스 코드를 먼저 컴파일한 뒤 STDIN을 집어넣어 완벽한 정답 출력값(STDOUT)을 실시간으로 생성하여 기준점으로 삼습니다.** (수동으로 Expected Output을 적을 필요가 없어 오타/프롬프트 불일치 문제가 완벽히 해결됩니다.)
+- **Session Prefix (분반 지정 기능):**
+  특정 분반만 문제가 다르게 출제되었을 경우 사용합니다. 입력 칸에 `lab1_1`을 기재하면 `lab1_1_ex1_1_1.txt`로 저장되며, 채점기가 `lab1_1` 학생들을 채점할 때만 이 테스트케이스를 최우선으로 적용합니다. (**모든 분반이 같은 문제라면 빈칸으로 둡니다.**)
+
+---
+
+### 탭 3. Lab Score Summary (종합 점수표)
+
+해당 Lab의 모든 Exercise 채점이 끝난 후, 성적을 하나로 병합(Outer Join)합니다.
+
+- **동작 방식:** 지정한 Lab Number에 해당하는 `Scores/LabX/` 폴더 내의 모든 `exX_Y_score.csv`를 탐색합니다.
+- **출력 정보:** 학생 ID별로 획득한 각 Exercise의 점수(`PointsX`), 총합(`Total Points`), 그리고 **감점 사유(`StatusX`)**를 한눈에 볼 수 있는 종합 DataFrame을 생성합니다.
+- **저장:** `LabX_Summary.csv` 파일로 자동 로컬 저장되며, 다운로드 버튼도 제공됩니다.
+
+---
+
+### 탭 4. Manual Code Runner (수동 코드 실행기)
+
+오답 처리되거나 실행 시간 초과(Time Out)가 발생한 특정 학생의 코드를 직접 디버깅할 수 있는 샌드박스(Sandbox) 환경입니다.
+
+- **특징 1. 학생 자동 탐색:** 학번(Student ID)만 입력하면 분반을 몰라도 전체 폴더를 스캔하여 대상 코드를 찾아냅니다.
+- **특징 2. Custom 컴파일 및 입력:** 컴파일러 종류나 `-std` 버전을 강제로 덮어씌워(Override) 테스트할 수 있으며, 원하는 `Custom Stdin`을 입력해 즉각적인 반응을 볼 수 있습니다.
+- **특징 3. 무한 루프 방지:** 5초 이상 프로그램이 종료되지 않으면 `Timeout`을 발생시켜 시스템 다운을 방지합니다.
+- **특징 4. I/O 시각적 분리:** 정상 출력(`Standard Output`)과 에러 로그(`Standard Error`)를 명확하게 분할하여 렌더링하므로 디버깅이 용이합니다.

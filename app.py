@@ -315,12 +315,12 @@ with tab_grade:
             ex_num = st.number_input("Ex Num", min_value=1, value=1, step=1)
             method = st.selectbox(
                 "Evaluation Method",
-                ["exact", "numeric", "contains", "any"],
+                ["numeric", "contains", "exact", "any"],
                 help="""
             **채점 방식(Evaluation Metric) 안내**
-            - **exact**: 학생의 출력값과 정답이 완벽히 일치해야 정답입니다.
             - **numeric**: 정답의 모든 숫자가 학생 출력 내에 '부분 수열'로 순서대로 존재하면 정답입니다. (중간에 다른 숫자가 끼어 있어도 정답 처리)
             - **contains**: 정답의 모든 단어가 학생 출력 내에 '부분 수열'로 순서대로 등장하면 정답입니다. (중간에 다른 단어가 출력되어도 정답 처리)
+            - **exact**: 학생의 출력값과 정답이 완벽히 일치해야 정답입니다.
             - **any**: 에러 없이 정상 종료되기만 하면 정답입니다.
             - **주의**: numeric과 contains는 부정확할 수 있으므로 결과를 직접 확인하시길 바랍니다. 
             """
