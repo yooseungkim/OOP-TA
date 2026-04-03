@@ -425,6 +425,10 @@ with tab_grade:
             * **Late (-2점):** 지각 제출 시 (파일명 `LATE` 감지)
             * **Constraint (-2점):** 지정된 필수 키워드/함수명 누락 또는 금지 키워드 사용
             * **Compile Error / No Submission:** 0점 처리
+                        
+            #### 성적 확인 
+            * Lab Summary에서 종합할 Lab 선택 후 확인 
+            * Minor/Major mistake 학생의 경우, Manual Runner 탭에서 간편 실행 후 출력 확인 가능
             """)
 
         with col2:
@@ -434,7 +438,7 @@ with tab_grade:
             Base_Directory/
             ├── 📂 Submission/          
             │   └── Lab1/            
-            │       ├── Answer/      <- 정답코드 및 테스트케이스 정답
+            │       ├── Answer/      <- 정답코드 또는 테스트케이스 정답
             │       ├── Testcase/    <- 테스트케이스 입력 파일
             │       ├── lab1_1/      <- 분반 (Session)
             │       └── lab1_2/      
