@@ -87,7 +87,7 @@ def grade_exercise(lab, ex, points, method, compiler, std, recompile, base_dir, 
     if has_ans_source:
         try:
             subprocess.run(
-                f"{compiler} -std={std} {ans_source} {ans_add_files_str} -o {ans_bin}", shell=True, check=True)
+                f"{compiler} -std={std} {ans_source} {ans_add_files_str} -o {ans_bin} -lm", shell=True, check=True)
         except subprocess.CalledProcessError:
             st.error("Answer source compile error. (추가 파일이 Answer 폴더에도 있는지 확인하세요)")
             return pd.DataFrame()
@@ -143,7 +143,7 @@ def grade_exercise(lab, ex, points, method, compiler, std, recompile, base_dir, 
                 [os.path.join(student_path, f) for f in add_files]) if add_files else ""
 
             if recompile or not os.path.isfile(compile_path):
-                compile_cmd = f"{compiler} -std={std} {source_file} {stud_add_files_str} -o {compile_path}"
+                compile_cmd = f"{compiler} -std={std} {source_file} {stud_add_files_str} -o {compile_path} -lm"
                 compile_process = subprocess.run(
                     compile_cmd, shell=True, capture_output=True, text=True)
                 if compile_process.returncode != 0:
@@ -331,7 +331,7 @@ with tab_grade:
         additional_files_str = st.text_input(
             "Additional Files (Optional)",
             value="",
-            help="메인 소스 코드 외에 함께 컴파일해야 할 파일이 있다면 확장자를 포함하여 쉼표(,)로 구분해 입력하세요. (예: Car.cpp, Student.cpp)"
+            help="메인 소스 코드 외에 함께 컴파일해야 할 파일이 있다면 확장자를 포함하여 쉼표(,)로 구분해 입력하세요. (예: Car.cpp, Student.cpp). 기본으로 math (-lm)은 추가되어있습니다."
         )
 
         add_files = [f.strip() for f in additional_files_str.split(
@@ -598,7 +598,7 @@ with tab_runner:
                     st.info(f"📄 **대상 파일:** `{source_file}`")
 
                     with st.spinner("Compiling code..."):
-                        compile_cmd = f"{run_compiler} -std={run_std} {source_file} -o {compile_path}"
+                        compile_cmd = f"{run_compiler} -std={run_std} {source_file} -o {compile_path} -lm"
                         compile_process = subprocess.run(
                             compile_cmd, shell=True, capture_output=True, text=True)
 
