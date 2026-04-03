@@ -40,20 +40,16 @@ def evaluate_output(output, expected, method):
 
     if method == 'exact':
         return out_norm == exp_norm
-
     elif method == 'any':
         return True
-
     elif method == 'numeric':
         out_nums = re.findall(r'-?\d+\.?\d*', output)
         exp_nums = re.findall(r'-?\d+\.?\d*', expected)
         return is_subsequence(exp_nums, out_nums)
-
     elif method == 'contains':
         out_words = out_norm.split()
         exp_words = exp_norm.split()
         return is_subsequence(exp_words, out_words)
-
     return False
 
 
@@ -184,21 +180,26 @@ def grade_exercise(lab, ex, points, method, compiler, std, recompile, base_dir, 
                     ans_output = open(ans_out_path, 'r').read(
                     ) if os.path.exists(ans_out_path) else ""
 
-                student_exec = subprocess.run(
-                    [compile_path], input=tc_input, capture_output=True, text=True)
-
-                if student_exec.returncode != 0:
-                    result_row[f"TC{ex}_{tc_index}"] = "Runtime Error"
-                    current_output = f"TC{tc_index} STDERR:\n{student_exec.stderr.strip()}"
+                try:
+                    student_exec = subprocess.run(
+                        [compile_path], input=tc_input, capture_output=True, text=True, timeout=5)
+                    if student_exec.returncode != 0:
+                        result_row[f"TC{ex}_{tc_index}"] = "Runtime Error"
+                        current_output = f"TC{tc_index} STDERR:\n{student_exec.stderr.strip()}"
+                        all_correct = False
+                        runtime_error_flag = True
+                    else:
+                        is_correct = evaluate_output(
+                            student_exec.stdout, ans_output, method)
+                        result_row[f"TC{ex}_{tc_index}"] = "O" if is_correct else "X"
+                        current_output = student_exec.stdout.strip()
+                        if not is_correct:
+                            all_correct = False
+                except subprocess.TimeoutExpired:
+                    result_row[f"TC{ex}_{tc_index}"] = "Time Out"
+                    current_output = f"TC{tc_index} STDERR: 무한 루프 또는 시간 초과 (5초)"
                     all_correct = False
                     runtime_error_flag = True
-                else:
-                    is_correct = evaluate_output(
-                        student_exec.stdout, ans_output, method)
-                    result_row[f"TC{ex}_{tc_index}"] = "O" if is_correct else "X"
-                    current_output = student_exec.stdout.strip()
-                    if not is_correct:
-                        all_correct = False
 
                 result_row[f"Output{ex}_{tc_index}"] = current_output
                 combined_outputs.append(f"[TC{tc_index}] {current_output}")
@@ -227,10 +228,6 @@ def grade_exercise(lab, ex, points, method, compiler, std, recompile, base_dir, 
 
 
 def summarize_scores(lab, base_dir):
-    """
-    Lab에 해당하는 모든 Exercise 채점 결과 CSV를 읽어 병합합니다.
-    추가로 감점 사유(Status) 컬럼도 함께 병합합니다.
-    """
     score_dir = os.path.join(base_dir, f"Scores/Lab{lab}")
     if not os.path.isdir(score_dir):
         return pd.DataFrame(), f"❌ Lab {lab}에 대한 점수 폴더({score_dir})를 찾을 수 없습니다."
@@ -249,10 +246,8 @@ def summarize_scores(lab, base_dir):
             if point_col:
                 ex_num = point_col[0].replace('Points', '')
                 status_col_name = f'Status{ex_num}'
-
                 cols_to_keep = ['Session #', 'Student ID', point_col[0]]
 
-                # Status 컬럼이 있다면 StatusX 로 이름 변경하여 가져오기
                 if 'Status' in df.columns:
                     df = df.rename(columns={'Status': status_col_name})
                     cols_to_keep.append(status_col_name)
@@ -262,7 +257,6 @@ def summarize_scores(lab, base_dir):
         except Exception as e:
             return pd.DataFrame(), f"❌ 파일({file})을 읽는 중 에러 발생: {str(e)}"
 
-    # 점수 합계를 위해 NaN 처리
     point_cols = [
         col for col in summary_df.columns if col.startswith('Points')]
     status_cols = [
@@ -273,9 +267,8 @@ def summarize_scores(lab, base_dir):
     summary_df['Total Points'] = summary_df[point_cols].sum(axis=1)
 
     for col in status_cols:
-        summary_df[col] = summary_df[col].fillna("-")  # 미제출 등으로 NaN인 경우 하이픈 처리
+        summary_df[col] = summary_df[col].fillna("-")
 
-    # 컬럼 정렬: ID -> Total Points -> (Points1, Status1) -> (Points2, Status2) ...
     ex_nums = sorted([int(col.replace('Points', '')) for col in point_cols])
     ordered_cols = ['Session #', 'Student ID', 'Total Points']
 
@@ -294,8 +287,9 @@ def summarize_scores(lab, base_dir):
 # --- UI Setup ---
 st.title("📚 GIST Autograder System")
 
-tab_grade, tab_tc, tab_summary = st.tabs(
-    ["Grader", "Testcase Manager", "Lab Score Summary"])
+# 탭 4개 유지 (수동 실행기 포함)
+tab_grade, tab_tc, tab_summary, tab_runner = st.tabs(
+    ["Grader", "Testcase Manager", "Lab Score Summary", "Manual Runner"])
 
 with tab_grade:
     with st.sidebar:
@@ -400,7 +394,6 @@ with tab_grade:
             base_dir, f"Scores/Lab{c_lab}/ex{c_lab}_{c_ex}_score.csv")
         df.to_csv(csv_path, index=False)
 
-        # 다운로드 버튼 및 안내 문구 추가
         col_down1, col_down2 = st.columns([1, 4])
         with col_down1:
             csv = df.to_csv(index=False).encode('utf-8')
@@ -411,7 +404,7 @@ with tab_grade:
                 mime='text/csv',
             )
         with col_down2:
-            st.info(f"💡 굳이 다운로드하지 않아도 **{csv_path}** 경로에 이미 자동 저장되어 있습니다.")
+            st.info(f"💡 다운로드하지 않아도 **{csv_path}** 경로에 이미 자동 저장되어 있습니다.")
 
         st.divider()
         if st.button("초기 화면으로 돌아가기"):
@@ -448,7 +441,6 @@ with tab_grade:
             └── 📂 Scores/              
             ```
             """)
-
 
 with tab_tc:
     st.header("📝 Testcase Manager")
@@ -500,8 +492,6 @@ with tab_tc:
         st.success(
             f"Testcase saved successfully to:\n- `{tc_file_path}`\n- `{ans_file_path}`")
 
-
-# --- 새로운 탭: Lab Score Summary ---
 with tab_summary:
     st.header("📊 Lab Score Summary")
     st.markdown(
@@ -520,14 +510,12 @@ with tab_summary:
             st.success("성공적으로 점수와 감점 사유를 병합했습니다!")
             st.dataframe(summary_df, use_container_width=True)
 
-            # 최종 요약본 Scores 폴더에 저장
             score_dir = os.path.join(base_dir, f"Scores/Lab{sum_lab_num}")
             os.makedirs(score_dir, exist_ok=True)
             summary_csv_path = os.path.join(
                 score_dir, f"Lab{sum_lab_num}_Summary.csv")
             summary_df.to_csv(summary_csv_path, index=False)
 
-            # 다운로드 버튼 및 안내 문구 추가
             col_sum_down1, col_sum_down2 = st.columns([1, 4])
             with col_sum_down1:
                 csv_data = summary_df.to_csv(index=False).encode('utf-8')
@@ -542,3 +530,113 @@ with tab_summary:
                     f"💡 다운로드하지 않아도 **{summary_csv_path}** 경로에 이미 자동 저장되어 있습니다.")
         else:
             st.warning(msg)
+
+# --- 새로운 탭: Manual Code Runner ---
+with tab_runner:
+    st.header("🏃‍♂️ Manual Code Runner")
+    st.markdown("오답이나 무한 루프가 의심되는 특정 학생의 코드를 직접 테스트케이스를 넣어보며 디버깅할 수 있습니다.")
+
+    col_run1, col_run2, col_run3 = st.columns(3)
+    with col_run1:
+        run_lab = st.number_input(
+            "Lab Number", min_value=1, value=1, step=1, key="run_l")
+    with col_run2:
+        run_ex = st.number_input(
+            "Exercise Number", min_value=1, value=1, step=1, key="run_e")
+    with col_run3:
+        run_id = st.text_input("Student ID", placeholder="e.g., s20231234")
+
+    st.markdown("---")
+    col_run4, col_run5 = st.columns(2)
+    with col_run4:
+        run_compiler = st.selectbox(
+            "Compiler Override", ["g++", "gcc"], key="run_c")
+    with col_run5:
+        run_std = st.text_input(
+            "-std Override", value="c++11" if run_compiler == "g++" else "c11", key="run_std")
+
+    run_input = st.text_area("Custom Stdin (Testcase Input)",
+                             height=150, placeholder="여기에 입력할 테스트케이스 텍스트를 적어주세요.")
+
+    if st.button("Run Student Code 🚀", type="primary"):
+        base_dir = st.session_state.get('base_dir', os.getcwd())
+        lab_dir = os.path.join(base_dir, f"Submission/Lab{run_lab}")
+
+        if not run_id.strip():
+            st.warning("학번(Student ID)을 입력해주세요.")
+        elif not os.path.exists(lab_dir):
+            st.error(f"❌ Lab 폴더를 찾을 수 없습니다: {lab_dir}")
+        else:
+            student_target_dir = None
+            for session in os.listdir(lab_dir):
+                potential_dir = os.path.join(lab_dir, session, run_id.strip())
+                if os.path.isdir(potential_dir) and session not in ['Answer', 'Testcase']:
+                    student_target_dir = potential_dir
+                    break
+
+            if not student_target_dir:
+                st.error(
+                    f"❌ '{run_id}' 학생의 제출 폴더를 찾을 수 없습니다. (Submission 폴더 내부를 확인해주세요)")
+            else:
+                ext = ".cpp" if run_compiler == "g++" else ".c"
+                search_pattern = os.path.join(
+                    student_target_dir, f"*ex{run_lab}_{run_ex}*{ext}")
+                source_files = glob.glob(search_pattern)
+
+                if not source_files:
+                    st.error(
+                        f"❌ 해당 학생의 ex{run_lab}_{run_ex} 소스코드 파일을 찾을 수 없습니다.")
+                else:
+                    source_file = source_files[0]
+                    compile_path = os.path.join(
+                        student_target_dir, f"ex{run_lab}_{run_ex}_manual_bin")
+
+                    st.info(f"📄 **대상 파일:** `{source_file}`")
+
+                    with st.spinner("Compiling code..."):
+                        compile_cmd = f"{run_compiler} -std={run_std} {source_file} -o {compile_path}"
+                        compile_process = subprocess.run(
+                            compile_cmd, shell=True, capture_output=True, text=True)
+
+                    if compile_process.returncode != 0:
+                        st.error("💥 컴파일 에러 발생 (Compile Error)")
+                        st.code(compile_process.stderr.strip(),
+                                language="bash")
+                    else:
+                        st.success("✅ 컴파일 성공. 코드를 실행합니다.")
+                        with st.spinner("Running code... (Max timeout: 5s)"):
+                            try:
+                                student_exec = subprocess.run(
+                                    [compile_path],
+                                    input=run_input,
+                                    capture_output=True,
+                                    text=True,
+                                    timeout=5
+                                )
+
+                                col_out1, col_out2 = st.columns(2)
+                                with col_out1:
+                                    st.markdown(
+                                        "### 🟢 Standard Output (stdout)")
+                                    if student_exec.stdout.strip():
+                                        st.code(
+                                            student_exec.stdout.strip(), language="text")
+                                    else:
+                                        st.caption("출력 내용이 없습니다.")
+
+                                    if student_exec.returncode != 0:
+                                        st.error(
+                                            f"⚠️ 프로그램이 비정상 종료되었습니다. (Return code: {student_exec.returncode})")
+
+                                with col_out2:
+                                    st.markdown(
+                                        "### 🔴 Standard Error (stderr)")
+                                    if student_exec.stderr.strip():
+                                        st.code(
+                                            student_exec.stderr.strip(), language="text")
+                                    else:
+                                        st.caption("에러 내용이 없습니다.")
+
+                            except subprocess.TimeoutExpired:
+                                st.error(
+                                    "⏱️ **실행 시간 초과 (Timeout)!** 프로그램이 5초 넘게 응답하지 않습니다. (무한 루프나 무한 대기 상태가 의심됩니다)")
