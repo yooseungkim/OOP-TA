@@ -74,7 +74,7 @@ def grade_exercise(lab, ex, points, method, compiler, std, recompile, base_dir, 
 
     if not os.path.exists(submission_dir):
         st.error(f"Directory not found: {submission_dir}")
-        return pd.DataFrame()
+        return pd.DataFrame(), {}
 
     ext = ".cpp" if compiler == "g++" else ".c"
     ans_source = os.path.join(answer_dir, f"ex{lab}_{ex}{ext}")
@@ -90,9 +90,11 @@ def grade_exercise(lab, ex, points, method, compiler, std, recompile, base_dir, 
                 f"{compiler} -std={std} {ans_source} {ans_add_files_str} -o {ans_bin} -lm", shell=True, check=True)
         except subprocess.CalledProcessError:
             st.error("Answer source compile error. (추가 파일이 Answer 폴더에도 있는지 확인하세요)")
-            return pd.DataFrame()
+            return pd.DataFrame(), {}
 
     scores = []
+    tc1_expected = {}
+
     sessions = [d for d in os.listdir(submission_dir) if os.path.isdir(
         os.path.join(submission_dir, d)) and d not in ["Answer", "Testcase"]]
 
@@ -158,8 +160,9 @@ def grade_exercise(lab, ex, points, method, compiler, std, recompile, base_dir, 
             runtime_error_flag = False
 
             while True:
+                # [대소문자 무시] 실제 폴더명(session)이 무엇이든 소문자로 치환하여 테스트케이스 매칭
                 session_tc_path = os.path.join(
-                    tc_dir, f"{session}_ex{lab}_{ex}_{tc_index}.txt")
+                    tc_dir, f"{session.lower()}_ex{lab}_{ex}_{tc_index}.txt")
                 default_tc_path = os.path.join(
                     tc_dir, f"ex{lab}_{ex}_{tc_index}.txt")
                 tc_path = session_tc_path if os.path.exists(
@@ -175,10 +178,19 @@ def grade_exercise(lab, ex, points, method, compiler, std, recompile, base_dir, 
                     ans_output = subprocess.run(
                         [ans_bin], input=tc_input, capture_output=True, text=True).stdout
                 else:
-                    ans_out_path = os.path.join(
+                    # [버그 수정] 정답 텍스트 파일(Answer/*.txt)도 분반 전용 파일을 먼저 찾도록 수정
+                    session_ans_path = os.path.join(
+                        answer_dir, f"{session.lower()}_ex{lab}_{ex}_{tc_index}.txt")
+                    default_ans_path = os.path.join(
                         answer_dir, f"ex{lab}_{ex}_{tc_index}.txt")
-                    ans_output = open(ans_out_path, 'r').read(
+                    ans_out_path = session_ans_path if os.path.exists(
+                        session_ans_path) else default_ans_path
+
+                    ans_output = open(ans_out_path, 'r', encoding='utf-8', errors='ignore').read(
                     ) if os.path.exists(ans_out_path) else ""
+
+                if tc_index == 1 and session not in tc1_expected:
+                    tc1_expected[session] = ans_output.strip()
 
                 try:
                     student_exec = subprocess.run(
@@ -224,7 +236,7 @@ def grade_exercise(lab, ex, points, method, compiler, std, recompile, base_dir, 
             result_row["Combined_Output"] = " | ".join(combined_outputs)
             scores.append(result_row)
 
-    return pd.DataFrame(scores)
+    return pd.DataFrame(scores), tc1_expected
 
 
 def summarize_scores(lab, base_dir):
@@ -287,7 +299,6 @@ def summarize_scores(lab, base_dir):
 # --- UI Setup ---
 st.title("📚 GIST Autograder System")
 
-# 탭 4개 유지 (수동 실행기 포함)
 tab_grade, tab_tc, tab_summary, tab_runner = st.tabs(
     ["Grader", "Testcase Manager", "Lab Score Summary", "Manual Runner"])
 
@@ -368,18 +379,39 @@ with tab_grade:
 
     if run_btn:
         with st.spinner('Compiling and Grading in progress...'):
-            df = grade_exercise(lab_num, ex_num, points, method, compiler,
-                                std, recompile, base_dir, req_keys, forb_keys, add_files)
+            df, tc1_exp = grade_exercise(lab_num, ex_num, points, method, compiler,
+                                         std, recompile, base_dir, req_keys, forb_keys, add_files)
             st.session_state['graded_df'] = df
+            st.session_state['tc1_expected'] = tc1_exp
             st.session_state['current_lab'] = lab_num
             st.session_state['current_ex'] = ex_num
 
     if 'graded_df' in st.session_state and not st.session_state['graded_df'].empty:
         df = st.session_state['graded_df']
+        tc1_exp = st.session_state.get('tc1_expected', {})
         c_lab = st.session_state['current_lab']
         c_ex = st.session_state['current_ex']
 
         st.success("🎉 Grading Completed!")
+
+        if tc1_exp:
+            st.markdown("#### 📌 Expected Output (Testcase 1)")
+
+            html_content = '<div style="display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 15px; padding-bottom: 10px;">\n'
+
+            for sess, out in tc1_exp.items():
+                safe_out = out.replace('&', '&amp;').replace(
+                    '<', '&lt;').replace('>', '&gt;') if out else "No Output"
+
+                # 들여쓰기(공백) 없이 한 줄씩 이어붙여서 마크다운 코드블록 버그를 방지합니다.
+                html_content += f'<div style="flex: 0 0 auto; min-width: 250px; max-width: 350px; background-color: rgba(128,128,128,0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(128,128,128,0.2);">\n'
+                html_content += f'<div style="font-size: 12px; font-weight: 600; margin-bottom: 5px; color: #888;">Session: {sess}</div>\n'
+                html_content += f'<pre style="margin: 0; font-family: monospace; font-size: 13px; line-height: 1.4; height: 2.8em; overflow-y: auto; white-space: pre-wrap; word-wrap: break-word; color: inherit; background: transparent; border: none; padding: 0;">{safe_out}</pre>\n'
+                html_content += f'</div>\n'
+
+            html_content += '</div>'
+            st.markdown(html_content, unsafe_allow_html=True)
+            st.divider()
 
         cols = df.columns.tolist()
         if "Status" in cols:
@@ -448,6 +480,12 @@ with tab_grade:
 
 with tab_tc:
     st.header("📝 Testcase Manager")
+
+    if 'tc_input_text' not in st.session_state:
+        st.session_state.tc_input_text = ""
+    if 'tc_answer_text' not in st.session_state:
+        st.session_state.tc_answer_text = ""
+
     col1, col2, col3 = st.columns(3)
 
     with col1:
@@ -462,17 +500,55 @@ with tab_tc:
 
     st.markdown("### Session Prefix (분반 지정)")
     st.caption("분반마다 문제가 달라서 **특정 분반 전용 테스트케이스**를 만들어야 할 때 사용합니다. (예: `lab1_1` 학생들만 다른 문제를 풀 경우). **모든 분반이 동일한 문제라면 비워두시면 됩니다.**")
-    session_prefix = st.text_input(
-        "**분반 폴더명** 입력 (Optional, e.g. `lab1_1`, `lab3_2`)", value="", help="입력된 이름이 파일명 맨 앞에 추가되어 분반 전용 파일로 인식됩니다.")
 
-    prefix = f"{session_prefix.strip()}_" if session_prefix.strip() else ""
+    col4, col5 = st.columns([3, 1])
+    with col4:
+        session_prefix = st.text_input(
+            "**분반 폴더명** 입력 (Optional, e.g. `lab1_1`, `lab3_2`)", value="", help="입력된 이름이 파일명 맨 앞에 추가되어 분반 전용 파일로 인식됩니다.")
+
+    prefix = f"{session_prefix.strip().lower()}_" if session_prefix.strip() else ""
     expected_file_name = f"{prefix}ex{tc_lab}_{tc_ex}_{tc_no}.txt"
-    st.info(f"👀 **생성될 파일 이름 (Preview):** `{expected_file_name}`")
+    st.info(f"👀 **생성(또는 검색) 대상 파일 이름:** `{expected_file_name}`")
+
+    with col5:
+        st.write("")
+        st.write("")
+        if st.button("🔍 Search / Load", use_container_width=True):
+            base_dir = st.session_state.get('base_dir', os.getcwd())
+            tc_target_dir = os.path.join(
+                base_dir, f"Submission/Lab{tc_lab}/Testcase")
+            ans_target_dir = os.path.join(
+                base_dir, f"Submission/Lab{tc_lab}/Answer")
+
+            tc_path = os.path.join(tc_target_dir, expected_file_name)
+            ans_path = os.path.join(ans_target_dir, expected_file_name)
+
+            loaded = False
+            if os.path.exists(tc_path):
+                with open(tc_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    st.session_state.tc_input_text = f.read()
+                loaded = True
+            else:
+                st.session_state.tc_input_text = ""
+
+            if os.path.exists(ans_path):
+                with open(ans_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    st.session_state.tc_answer_text = f.read()
+                loaded = True
+            else:
+                st.session_state.tc_answer_text = ""
+
+            if loaded:
+                st.success(f"✅ 기존 테스트케이스를 성공적으로 불러왔습니다.")
+            else:
+                st.warning("⚠️ 등록된 파일이 없습니다. 새로 작성해주세요.")
+
     st.markdown("---")
 
-    tc_input_text = st.text_area("Testcase Input (STDIN)", height=150)
+    tc_input_text = st.text_area(
+        "Testcase Input (STDIN)", height=150, key="tc_input_text")
     tc_answer_text = st.text_area(
-        "Expected Output (STDOUT - Optional if using answer.cpp)", height=150)
+        "Expected Output (STDOUT - Optional if using answer.cpp)", height=150, key="tc_answer_text")
 
     if st.button("Save Testcase 💾"):
         base_dir = st.session_state.get('base_dir', os.getcwd())
@@ -540,6 +616,9 @@ with tab_runner:
     st.header("🏃‍♂️ Manual Code Runner")
     st.markdown("오답이나 무한 루프가 의심되는 특정 학생의 코드를 직접 테스트케이스를 넣어보며 디버깅할 수 있습니다.")
 
+    def update_run_std():
+        st.session_state.run_std = "c++11" if st.session_state.run_c == "g++" else "c11"
+
     col_run1, col_run2, col_run3 = st.columns(3)
     with col_run1:
         run_lab = st.number_input(
@@ -554,13 +633,32 @@ with tab_runner:
     col_run4, col_run5 = st.columns(2)
     with col_run4:
         run_compiler = st.selectbox(
-            "Compiler Override", ["g++", "gcc"], key="run_c")
+            "Compiler Override", ["g++", "gcc"], key="run_c", on_change=update_run_std)
     with col_run5:
-        run_std = st.text_input(
-            "-std Override", value="c++11" if run_compiler == "g++" else "c11", key="run_std")
+        if "run_std" not in st.session_state:
+            st.session_state.run_std = "c++11" if run_compiler == "g++" else "c11"
+        run_std = st.text_input("-std Override", key="run_std")
 
-    run_input = st.text_area("Custom Stdin (Testcase Input)",
-                             height=150, placeholder="여기에 입력할 테스트케이스 텍스트를 적어주세요.")
+    st.markdown("#### Testcase Input Selection")
+    base_dir = st.session_state.get('base_dir', os.getcwd())
+    tc_dir_runner = os.path.join(base_dir, f"Submission/Lab{run_lab}/Testcase")
+
+    tc_options = ["Custom Input"]
+    if os.path.exists(tc_dir_runner):
+        tc_files = glob.glob(os.path.join(
+            tc_dir_runner, f"*ex{run_lab}_{run_ex}_*.txt"))
+        tc_options.extend([os.path.basename(f) for f in sorted(tc_files)])
+
+    selected_tc = st.selectbox("Load Existing Testcase", tc_options)
+
+    if selected_tc != "Custom Input":
+        with open(os.path.join(tc_dir_runner, selected_tc), "r", encoding="utf-8", errors="ignore") as f:
+            loaded_tc_content = f.read()
+        run_input = st.text_area(
+            "Stdin (Testcase Input)", value=loaded_tc_content, height=150)
+    else:
+        run_input = st.text_area(
+            "Stdin (Testcase Input)", height=150, placeholder="여기에 입력할 테스트케이스 텍스트를 적어주세요.")
 
     if st.button("Run Student Code 🚀", type="primary"):
         base_dir = st.session_state.get('base_dir', os.getcwd())
